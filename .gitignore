@@ -1,5 +1,7 @@
 node_modules/
 .expo/
+assets/
+.expo-shared/
 dist/
 npm-debug.*
 *.jks

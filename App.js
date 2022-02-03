@@ -1,12 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
+import { StyleSheet, Text, SafeAreaView } from 'react-native';
+import LoginRouter from "./src/components/LoginRouter";
+import React from 'react'
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <LoginRouter/>
+    </SafeAreaView>
   );
 }
 

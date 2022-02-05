@@ -1,12 +1,13 @@
 import React from 'react';
 import {SafeAreaView, Text, StyleSheet, View, TouchableOpacity} from "react-native";
 
-const Research = (props, {navigation}) => {
+const ResearchTemp = (props, {navigation}) => {
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity
                 style={styles.itemCont}
                 onPress={()=>{
+                    props.setRsch(props.rsch.surveys)
                     props.navigation.navigate('Surveys')
                 }}
             >
@@ -33,18 +34,21 @@ const styles = StyleSheet.create({
         alignItems:'center',
         margin:10,
         marginTop:20,
-        paddingTop:30,
-        paddingBottom:30,
+        paddingVertical:30,
         backgroundColor:'white'
     },
     title:{
         fontSize:20,
-        color:'sandybrown'
+        color:'sandybrown',
+        textAlign:'center',
+        paddingHorizontal:10
     },
     description:{
         fontSize:14,
-        color:'#000'
+        color:'#000',
+        textAlign:'center',
+        paddingHorizontal:10
     }
 })
 
-export default Research;
+export default ResearchTemp;

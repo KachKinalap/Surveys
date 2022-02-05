@@ -13,6 +13,7 @@ const MyInput = (props) => {
                     onChangeText={text=>props.onChange(text)}
                     value={props.value?props.value:''}
                     keyboardType={props.keyType?props.keyType:'default'}
+                    onSubmitEditing={props.onSubmit?props.onSubmit:()=>{}}
                 />
             </View>
         </View>

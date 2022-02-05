@@ -1,19 +1,36 @@
 import React from 'react';
-import {Text, StyleSheet, SafeAreaView, Button} from 'react-native'
+import {Text, StyleSheet, SafeAreaView, Button, ScrollView} from 'react-native'
+import SurveyTemp from "./SurveyTemp";
+import Loader from "../UI/Loader";
 
 const Surveys = (props) => {
     return (
         <SafeAreaView style={styles.container}>
-            <Text>Surveys</Text>
+            <ScrollView>
+            {
+                props.currRsch
+                    ?
+                    props.currRsch.map( (surv) =>
+                        <SurveyTemp
+                            key={surv.id}
+                            data={surv}
+                            navigation={props.navigation}
+                            setSurv={props.setSurv}
+                        />
+                    )
+                    :
+                    <Loader/>
+            }
+            </ScrollView>
         </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
     container:{
-        display:'flex',
-        justifyContent:'center',
-        alignItems:'center'
+        backgroundColor:'sandybrown',
+        width:'100%',
+        height:'100%'
     }
 })
 

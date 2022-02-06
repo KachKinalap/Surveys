@@ -5,7 +5,7 @@ import MyInput from "./MyInput";
 const Open = (props) => {
 
     const isInArray = (i)=>{
-        return (i.id === props.askID)
+        return (i.id === props.askID && i.answerId === props.ansID)
     }
     const [ind, setInd] = useState(props.result.questions.findIndex(isInArray))
     const [openA, setOpenA] = useState((ind===-1) ? '' : props.result.questions[ind].text)
@@ -21,9 +21,9 @@ const Open = (props) => {
         if(ind === -1){
             const ans = {
                 "id": props.askID,
-                "answerId":"",
+                "answerId":props.ansID,
                 //TODO запилить что-то нормальное в дату
-                "createdAt": "2021-12-01T00:00:00.000",
+                //"createdAt": "2021-12-01T00:00:00.000",
                 "beginDate": "2021-12-01T00:00:00.000",
                 "endDate": "2021-12-31T00:00:00.000",
                 "text": openA
@@ -40,7 +40,7 @@ const Open = (props) => {
     return (
         <View style={{marginTop:'40%'}}>
             <MyInput
-                label={'Введите ответ в поле ниже'}
+                label={props.askText}
                 onChange={setOpenA}
                 value={openA}
             />

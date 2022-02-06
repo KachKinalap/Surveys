@@ -22,10 +22,10 @@ const Variant = (props) => {
                         "id": props.askID,
                         "answerId": props.ansID,
                         //TODO запилить что-то нормальное в дату
-                        "createdAt": "2021-12-01T00:00:00.000",
+                        //"createdAt": "2021-12-01T00:00:00.000",
                         "beginDate": "2021-12-01T00:00:00.000",
                         "endDate": "2021-12-31T00:00:00.000",
-                        "text": props.textV
+                        //"text": props.textV
                     }
                     const currRes = props.result
                     currRes.questions.push(ans)

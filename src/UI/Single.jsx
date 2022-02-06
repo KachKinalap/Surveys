@@ -29,10 +29,10 @@ const Single = (props) => {
                             "id": props.askID,
                             "answerId": newValue,
                             //TODO запилить что-то нормальное в дату
-                            "createdAt": "2021-12-01T00:00:00.000",
+                            //"createdAt": "2021-12-01T00:00:00.000",
                             "beginDate": "2021-12-01T00:00:00.000",
                             "endDate": "2021-12-31T00:00:00.000",
-                            "text": props.data[props.data.findIndex((i)=>+i.id === +newValue)].text
+                            //"text": props.data[props.data.findIndex((i)=>+i.id === +newValue)].text
                         }
 
                         const currRes = props.result
@@ -42,7 +42,7 @@ const Single = (props) => {
                     else{
                         const currRes = props.result
                         currRes.questions[ind].answerId = newValue
-                        currRes.questions[ind].text = props.data[props.data.findIndex((i)=>+i.id === +newValue)].text
+                        //currRes.questions[ind].text = props.data[props.data.findIndex((i)=>+i.id === +newValue)].text
                         props.setResult(currRes)
                     }
                     setRadio(newValue);

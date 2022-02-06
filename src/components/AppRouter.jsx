@@ -55,7 +55,7 @@ const AppRouter = (props) => {
                         {(props) => <Surveys {...props} currRsch={currRsch} setSurv={setCurrSurv} location={location}/>}
                     </Stack.Screen>
                     <Stack.Screen name="ActiveSurvey" options={{ title: 'ActiveSurvey' }}>
-                        {(props) => <ActiveSurvey {...props} currSurv={currSurv} token={token}/>}
+                        {(props) => <ActiveSurvey {...props} currSurv={currSurv} token={token} location={location}/>}
                     </Stack.Screen>
                 </Stack.Navigator>
             </NavigationContainer>

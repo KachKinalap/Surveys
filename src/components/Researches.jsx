@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import {SafeAreaView, Text, Button, TouchableOpacity, StyleSheet, View, ScrollView} from 'react-native';
+import React from 'react';
+import {SafeAreaView, StyleSheet, ScrollView} from 'react-native';
 import Loader from "../UI/Loader";
 import ResearchTemp from "./ResearchTemp";
 

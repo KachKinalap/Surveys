@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Button} from 'react-native'
+import React from 'react';
+import {View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 
 const MyButton = (props) => {
 

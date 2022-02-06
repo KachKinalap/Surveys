@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {Text, View} from "react-native";
+import {View} from "react-native";
 import MyInput from "./MyInput";
 
 const Open = (props) => {
+
+    const [begin, setBegin] = useState(new Date())
 
     const isInArray = (i)=>{
         return (i.id === props.askID && i.answerId === props.ansID)
@@ -22,10 +24,9 @@ const Open = (props) => {
             const ans = {
                 "id": props.askID,
                 "answerId":props.ansID,
-                //TODO запилить что-то нормальное в дату
-                //"createdAt": "2021-12-01T00:00:00.000",
-                "beginDate": "2021-12-01T00:00:00.000",
-                "endDate": "2021-12-31T00:00:00.000",
+                "createdAt": props.create,
+                "beginDate": begin,
+                "endDate": new Date(),
                 "text": openA
             }
             currRes.questions.push(ans)

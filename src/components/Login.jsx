@@ -1,24 +1,27 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, TextInput, Button, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import { getToken } from '../API/postService'
 import MyInput from "../UI/MyInput";
 import '@react-navigation/native'
 import Loader from "../UI/Loader";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = (props) => {
-
-    const [login, setLogin] = useState('admin')
-    const [pass, setPass] = useState('admin')
+    const [IP, setIP] = useState('')
+    const [login, setLogin] = useState('')
+    const [pass, setPass] = useState('')
     const [loading, setLoading] = useState(false)
 
-    const Auth = async (userLogin, password)=> {
-        const response =  await getToken(userLogin, password)
+    const Auth = async (userLogin, password, Ip)=> {
+        const response =  await getToken(userLogin, password, Ip)
         if(response.status === 200){
             props.setAccessToken(response.data.payload.accessToken)
             props.setRefreshToken(response.data.payload.refreshToken)
-            setLoading(false)
-            props.setIsAuth(true)
+            AsyncStorage.setItem('IPserver',Ip).then(()=>{
+                setLoading(false)
+                props.setIsAuth(true)
+            })
+
         }
     }
 
@@ -41,11 +44,17 @@ const Login = (props) => {
                             label={'Пароль'}
                             onChange={setPass}
                         />
+                        <MyInput
+                            value={IP}
+                            secure={false}
+                            label={'IP сервера API и БД'}
+                            onChange={setIP}
+                        />
                         <TouchableOpacity
                             style={styles.button}
                             onPress={async ()=>{
                                 setLoading(true)
-                                await Auth(login, pass)
+                                await Auth(login, pass, IP)
                             }}>
                             <Text style={{fontSize:18, color:'#fff'}}>
                                 Enter

@@ -1,7 +1,7 @@
 import React from 'react';
 import {SafeAreaView, Text, StyleSheet, View, TouchableOpacity} from "react-native";
 
-const ResearchTemp = (props, {navigation}) => {
+const ResearchTemp = (props) => {
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity

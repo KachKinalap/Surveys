@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Button} from 'react-native';
+import {View} from 'react-native';
 import Loader from "../UI/Loader";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";

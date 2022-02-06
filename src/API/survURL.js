@@ -1,5 +1,6 @@
-const SURV_URL = "http://192.168.43.73:8080/api/v1.0/"
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export {
-    SURV_URL
+export async function SURV_URL() {
+    const IP = await AsyncStorage.getItem('IPserver')
+    return `http://${IP}:8080/api/v1.0/`
 }

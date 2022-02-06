@@ -1,5 +1,5 @@
 import React, {useState, useMemo} from 'react';
-import {View, Text, Button, StyleSheet, ScrollView, Modal, TouchableOpacity, Alert} from 'react-native'
+import {View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity, Alert} from 'react-native'
 import {getId} from "../utils/genId";
 import Multiple from "../UI/Multiple";
 import Single from "../UI/Single";
@@ -9,6 +9,8 @@ import {sendSurvey} from "../API/postService";
 import Loader from "../UI/Loader";
 
 const ActiveSurvey = (props) => {
+
+    const beginForQ = useMemo(() => new Date(), [props.currSurv]);
 
     //состояние для статуса загрузки
     const [statusText, setStatusText] = useState('')
@@ -74,9 +76,9 @@ const ActiveSurvey = (props) => {
                                     let totalRes = filledSurvey
                                     totalRes.endDate = new Date()
                                     totalRes.completed = true
+                                    console.log(totalRes)
                                     sendSurvey(props.token, totalRes)
-                                        .then((resolve)=>{
-                                            console.log(resolve)
+                                        .then(()=>{
                                             setLoading(false)
                                             setStatusText('Опрос успешно отправлен, сейчас вы будете автоматически перенаправлены на страницу с опросами')
                                             setStatusVisible(true)
@@ -129,6 +131,7 @@ const ActiveSurvey = (props) => {
                                     askID={props.currSurv.questions[currInd].id}
                                     result={filledSurvey}
                                     setResult={setFilledSurvey}
+                                    create={beginForQ}
                                 />
                                 :
                                 type === "single"
@@ -138,6 +141,7 @@ const ActiveSurvey = (props) => {
                                         data={props.currSurv.questions[currInd].answers}
                                         result={filledSurvey}
                                         setResult={setFilledSurvey}
+                                        create={beginForQ}
                                     />
                                     :
                                     <Open
@@ -146,6 +150,7 @@ const ActiveSurvey = (props) => {
                                         askText={props.currSurv.questions[currInd].answers[0].text}
                                         result={filledSurvey}
                                         setResult={setFilledSurvey}
+                                        create={beginForQ}
                                     />
                         }
                     </ScrollView>

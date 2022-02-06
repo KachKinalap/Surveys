@@ -1,10 +1,7 @@
-import React, {useState, useEffect, useMemo} from 'react';
-import { Text, View } from "react-native";
+import React, {useState, useEffect} from 'react';
 import Variant from "./Variant";
 
 const Multiple = (props) => {
-
-    const create = useMemo(() => new Date(), [props.data]);
 
     const [begin, setBegin] = useState(new Date())
 
@@ -24,7 +21,7 @@ const Multiple = (props) => {
                 askID={props.askID}
                 key={variant.id}
                 begin={begin}
-                create={create}
+                create={props.create}
             />
         )
     );

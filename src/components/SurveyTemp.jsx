@@ -1,7 +1,7 @@
 import React from 'react';
 import {SafeAreaView, Text, StyleSheet, View, TouchableOpacity} from "react-native";
 //разные компоненты для research и survey в случае, если понадобится отображать разные вещи, чтобы не усложнять логику одного компонента, а добавить немного в один из :)
-const SurveyTemp = (props, {navigation}) => {
+const SurveyTemp = (props) => {
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity

@@ -7,7 +7,7 @@ const Single = (props) => {
         return (i.id === props.askID)
     }
 
-
+    const [begin, setBegin] = useState(new Date())
 
     const [ind, setInd] = useState(props.result.questions.findIndex(isInArray))
 
@@ -28,9 +28,8 @@ const Single = (props) => {
                         const ans = {
                             "id": props.askID,
                             "answerId": newValue,
-                            //TODO запилить что-то нормальное в дату
-                            //"createdAt": "2021-12-01T00:00:00.000",
-                            "beginDate": "2021-12-01T00:00:00.000",
+                            "createdAt": props.create,
+                            "beginDate": begin,
                             "endDate": "2021-12-31T00:00:00.000",
                             //"text": props.data[props.data.findIndex((i)=>+i.id === +newValue)].text
                         }

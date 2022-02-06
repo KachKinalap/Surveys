@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, StyleSheet, SafeAreaView, Button, ScrollView} from 'react-native'
+import { StyleSheet, SafeAreaView, ScrollView } from 'react-native'
 import SurveyTemp from "./SurveyTemp";
 import Loader from "../UI/Loader";
 

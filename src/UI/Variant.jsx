@@ -21,11 +21,10 @@ const Variant = (props) => {
                     const ans = {
                         "id": props.askID,
                         "answerId": props.ansID,
-                        //TODO запилить что-то нормальное в дату
                         "createdAt": props.create,
                         "beginDate": props.begin,
                         "endDate": new Date(),
-                        "text": props.textV //нужно ли
+                        "text": props.textV
                     }
                     const currRes = props.result
                     currRes.questions.push(ans)

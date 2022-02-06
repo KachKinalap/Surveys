@@ -3,8 +3,9 @@ import { SURV_URL } from "./survURL";
 
 export async function sendSurvey(token, data) {
     let survey = JSON.stringify(data)
+    const URL = await SURV_URL()
     try {
-        const response = await axios.post(`${SURV_URL}survey/filled`, survey, {
+        const response = await axios.post(`${URL}survey/filled`, survey, {
             headers: {
                 "Authorization":`Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -26,10 +27,10 @@ export async function sendSurvey(token, data) {
     throw new Error("Something wrong with sending survey");
 }
 
-export async function getToken(login, password) {
+export async function getToken(login, password, IP) {
     try{
         const data = JSON.stringify({"login": login, "password": password})
-        const resp = await axios.post(`${SURV_URL}auth/signin`, data, {
+        const resp = await axios.post(`http://${IP}:8080/api/v1.0/auth/signin`, data, {
             headers: {
                 'content-type': 'application/json'
             }
@@ -43,7 +44,8 @@ export async function getToken(login, password) {
 export async function getResearches(accessToken) {
     try{
         const authStr = 'Bearer '+ accessToken
-        const resp = await axios.get(`${SURV_URL}research`, { headers: { Authorization: authStr } })
+        const URL = await SURV_URL()
+        const resp = await axios.get(`${URL}research`, { headers: { Authorization: authStr } })
         return resp
     } catch (e) {
         console.log(e)

@@ -1,8 +1,19 @@
-import React from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import { Text, View } from "react-native";
 import Variant from "./Variant";
 
 const Multiple = (props) => {
+
+    const create = useMemo(() => new Date(), [props.data]);
+
+    const [begin, setBegin] = useState(new Date())
+
+    useEffect(()=>{
+        setBegin(new Date())
+    },[props.askID])
+
+
+
     return (
         props.data.map( (variant) =>
             <Variant
@@ -12,6 +23,8 @@ const Multiple = (props) => {
                 ansID={variant.id}
                 askID={props.askID}
                 key={variant.id}
+                begin={begin}
+                create={create}
             />
         )
     );

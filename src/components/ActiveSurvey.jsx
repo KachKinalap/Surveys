@@ -7,9 +7,12 @@ import Open from "../UI/Open";
 import MyButton from "../UI/MyButton";
 import {sendSurvey} from "../API/postService";
 import Loader from "../UI/Loader";
-import { showSuccess } from "../utils/notices";
 
 const ActiveSurvey = (props) => {
+
+    //состояние для статуса загрузки
+    const [statusText, setStatusText] = useState('')
+    const [statusVisible, setStatusVisible] = useState(false)
 
     //состояние для модального окна
     const [modalVisible, setModalVisible] = useState(false)
@@ -71,15 +74,15 @@ const ActiveSurvey = (props) => {
                                     let totalRes = filledSurvey
                                     totalRes.endDate = new Date()
                                     totalRes.completed = true
-                                    showSuccess("Результат успешно отправлен")
                                     sendSurvey(props.token, totalRes)
                                         .then((resolve)=>{
                                             console.log(resolve)
                                             setLoading(false)
-
-                                            // setTimeout(()=>{
-                                            //     props.navigation.navigate('Surveys')
-                                            // },3000)
+                                            setStatusText('Опрос успешно отправлен, сейчас вы будете автоматически перенаправлены на страницу с опросами')
+                                            setStatusVisible(true)
+                                            setTimeout(()=>{
+                                                props.navigation.navigate('Surveys')
+                                            },2000)
                                         })
                                 }}
                             >
@@ -107,6 +110,14 @@ const ActiveSurvey = (props) => {
                     </View>
                     {
                         //логика для вариантов ответа ниже
+                    }
+                    {statusVisible
+                    ?
+                        <View style={styles.popup}>
+                            <Text style={styles.popupText}>{statusText}</Text>
+                        </View>
+                    :
+                        console.log('')
                     }
                     <ScrollView style={styles.answCont}>
                         {
@@ -162,7 +173,6 @@ const ActiveSurvey = (props) => {
                                 <MyButton
                                     title={"Далее"}
                                     onPress={()=>{setCurrInd(currInd+1);
-                                    //console.log(filledSurvey)
                                     }}
                                 />
                         }
@@ -261,6 +271,16 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         textAlign: "center",
         fontSize:20
+    },
+    popup:{
+        flex:1,
+        justifyContent: 'flex-end',
+        alignItems: 'center'
+    },
+    popupText:{
+        fontSize: 24,
+        color:'black',
+        textAlign:'center'
     }
 })
 

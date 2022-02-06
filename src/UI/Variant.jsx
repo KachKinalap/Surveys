@@ -22,10 +22,10 @@ const Variant = (props) => {
                         "id": props.askID,
                         "answerId": props.ansID,
                         //TODO запилить что-то нормальное в дату
-                        //"createdAt": "2021-12-01T00:00:00.000",
-                        "beginDate": "2021-12-01T00:00:00.000",
-                        "endDate": "2021-12-31T00:00:00.000",
-                        //"text": props.textV
+                        "createdAt": props.create,
+                        "beginDate": props.begin,
+                        "endDate": new Date(),
+                        "text": props.textV //нужно ли
                     }
                     const currRes = props.result
                     currRes.questions.push(ans)
@@ -33,9 +33,9 @@ const Variant = (props) => {
                 }
                 else{
                     const ind = props.result.questions.findIndex(isInArray)
-                    if(ind){
+                    if(ind !== -1){
                         const currRes = props.result
-                        currRes.questions.splice(1, ind)
+                        currRes.questions.splice(ind, 1)
                         props.setResult(currRes)
                     }
                 }

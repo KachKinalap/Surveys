@@ -1,5 +1,7 @@
 import Toast from "react-native-toast-message";
 
+//пока нет в проекте, не подключилось
+
 export function showError(message) {
     Toast.show({
         type: 'error',

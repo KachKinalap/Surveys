@@ -5,16 +5,22 @@ import MyInput from "../UI/MyInput";
 import '@react-navigation/native'
 import Loader from "../UI/Loader";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector, useDispatch } from 'react-redux'
+import { setAccessToken, setRefreshToken } from "../redux/actions";
 
 const Login = (props) => {
-    const [IP, setIP] = useState('')
-    const [login, setLogin] = useState('')
-    const [pass, setPass] = useState('')
+    const [IP, setIP] = useState('10.0.0.100')
+    const [login, setLogin] = useState('admin')
+    const [pass, setPass] = useState('admin')
     const [loading, setLoading] = useState(false)
+    const { accessToken, refreshToken } = useSelector( state => state.tokenReducer )
+    const dispatch = useDispatch()
 
     const Auth = async (userLogin, password, Ip)=> {
         const response =  await getToken(userLogin, password, Ip)
         if(response.status === 200){
+            dispatch( setAccessToken(response.data.payload.accessToken) )
+            dispatch( setRefreshToken(response.data.payload.refreshToken) )
             props.setAccessToken(response.data.payload.accessToken)
             props.setRefreshToken(response.data.payload.refreshToken)
             AsyncStorage.setItem('IPserver',Ip).then(()=>{

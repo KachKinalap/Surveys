@@ -48,7 +48,7 @@ const Login = (props) => {
     const [loading, setLoading] = useState(false)
     const { accessToken, refreshToken } = useSelector( state => state.tokenReducer )
     const dispatch = useDispatch()
-
+    console.log('accessToken\n', accessToken,`\n`,'refreshToken\n', refreshToken)
     useEffect(()=>{
         getIPFromStorage().then(( res ) => {
             setInitialIP( res )

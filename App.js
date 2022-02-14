@@ -3,13 +3,17 @@ import LoginRouter from "./src/components/LoginRouter";
 import React from 'react'
 import { Provider } from "react-redux";
 import { Store } from "./src/redux/store";
+import { persistor } from "./src/redux/store"
+import { PersistGate } from 'redux-persist/lib/integration/react';
 
 export default function App() {
   return (
       <Provider store={ Store }>
-    <SafeAreaView style={styles.container}>
-      <LoginRouter/>
-    </SafeAreaView>
+        <PersistGate loading={null} persistor={persistor}>
+          <SafeAreaView style={styles.container}>
+            <LoginRouter/>
+          </SafeAreaView>
+        </PersistGate>
       </Provider>
   );
 }

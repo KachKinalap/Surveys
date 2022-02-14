@@ -1,53 +1,66 @@
-import React from 'react';
-import {SafeAreaView} from "react-native-web";
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import ResearchesRouter from "./ResearchesRouter";
-import Settings from "./Settings";
-
-const Tab = createBottomTabNavigator();
+import React, {useState, useEffect} from 'react';
+import {View} from 'react-native';
+import Loader from "../UI/Loader";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Researches from "./Researches";
+import Surveys from "./Surveys";
+import { getResearches } from '../API/postService'
+import {getCoord} from "../API/geo";
+import ActiveSurvey from "./ActiveSurvey";
+import {useSelector} from "react-redux";
 
 const AppRouter = (props) => {
+    //почему-то из пропсов напрямую токен сохраняться не хочет, что ж, у меня в запасе всегда пара костылей...
+    const { accessToken, refreshToken } = useSelector( state => state.tokenReducer )
+    //локация
+    const [location, setLocation] = useState(null)
+    //состояние для кольца загрузки
+    const [loading, setLoading] = useState(true)
+    //состояние для json получаемых исследований
+    const [rsrchs, setRsrchs] = useState('')
+    //конкретное исследование, опросы которого будут отображаться при клике на него
+    const [currRsch, setCurrRsch] = useState([])
+    //конкретный опрос, который будет передаваться в ActiveSurvey для его прохождения
+    const [currSurv, setCurrSurv] = useState([])
 
-    //TODO сделать IP в redux и запилить проверку сюда, если IP не введён, сначала перекидывать на страницу настроек
-//screenOptions={{headerShown: false}}
+    useEffect(()=>{
+        getCoord().then(
+            (result)=>{
+                setLocation( result )
+            }
+        )
+    },[])
+
+    useEffect(()=>{
+        getResearches(accessToken).then((result)=>{
+            setRsrchs(result.data.payload.researches)
+            setLoading(false)
+        })
+    },[])
+
+    const Stack = createNativeStackNavigator();
     return (
+            loading
+            ?
+            <View style={{display:'flex', justifyContent:'center', alignItems:'center', width:'100%', height:'100%'}}>
+                <Loader/>
+            </View>
+            :
             <NavigationContainer>
-                <Tab.Navigator
-                    initialRouteName={initialComponent}
-                    screenOptions={({ route }) => ({
-                        tabBarIcon: ({color, size }) => {
-                            let iconName;
-
-                            if (route.name === 'Camera') {
-                                iconName = 'camera'
-                            }
-                            else if (route.name === 'History') {
-                                iconName = 'time'
-                            }
-                            else if (route.name === 'Settings') {
-                                iconName = 'settings'
-                            }
-                            // You can return any component that you like here!
-                            return <Ionicons name={iconName} size={size} color={color} />;
-                        },
-                        tabBarActiveTintColor: '#90C900',
-                        tabBarInactiveTintColor: 'gray',
-                        unmountOnBlur:true
-                    })}
-                >
-                    <Tab.Screen name="Camera" component={()=><CameraView changer={changer} setChanger={setChanger} token={props.token} coord={location}/>}/>
-                    <Tab.Screen name="History" component={()=><Gallery token={props.token} coord={location}/>} />
-                    <Tab.Screen name="Settings" component={()=><Settings setIsAuth={props.setIsAuth}/>} />
-                </Tab.Navigator>
+                <Stack.Navigator>
+                    <Stack.Screen name='Researches' options={{ title: 'Researches' }}>
+                        {(props) => <Researches {...props} researches={rsrchs} setRsch={setCurrRsch}/>}
+                    </Stack.Screen>
+                    <Stack.Screen name="Surveys" options={{ title: 'Surveys' }}>
+                        {(props) => <Surveys {...props} currRsch={currRsch} setSurv={setCurrSurv} location={location}/>}
+                    </Stack.Screen>
+                    <Stack.Screen name="ActiveSurvey" options={{ title: 'ActiveSurvey' }}>
+                        {(props) => <ActiveSurvey {...props} currSurv={currSurv} token={accessToken} location={location}/>}
+                    </Stack.Screen>
+                </Stack.Navigator>
             </NavigationContainer>
-
-
-
-
     );
 };
-
-
 
 export default AppRouter;

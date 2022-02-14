@@ -38,6 +38,7 @@ export async function getToken(login, password, IP) {
         return resp
     } catch (e) {
         console.log(e)
+        return e
     }
 }
 
@@ -46,8 +47,9 @@ export async function getResearches(accessToken) {
         const authStr = 'Bearer '+ accessToken
         const URL = await SURV_URL()
         const resp = await axios.get(`${URL}research?count=100`, { headers: { Authorization: authStr } })
+        console.log('resches\n', resp)
         return resp
     } catch (e) {
-        console.log(e)
+        return e
     }
 }

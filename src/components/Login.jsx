@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import { getToken } from '../API/postService'
 import MyInput from "../UI/MyInput";
@@ -6,30 +6,55 @@ import '@react-navigation/native'
 import Loader from "../UI/Loader";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux'
-import { setAccessToken, setRefreshToken } from "../redux/actions";
+import {setAccessToken, setRefreshToken} from "../redux/actions";
 
 const Login = (props) => {
-    const [IP, setIP] = useState('10.0.0.100')
-    const [login, setLogin] = useState('admin')
-    const [pass, setPass] = useState('admin')
-    const [loading, setLoading] = useState(false)
-    const { accessToken, refreshToken } = useSelector( state => state.tokenReducer )
-    const dispatch = useDispatch()
+
+    const getIPFromStorage = async()=>{
+        const IP = await AsyncStorage.getItem('IPserver')
+        if(IP){
+            return IP
+        }
+        return ''
+    }
 
     const Auth = async (userLogin, password, Ip)=> {
         const response =  await getToken(userLogin, password, Ip)
         if(response.status === 200){
             dispatch( setAccessToken(response.data.payload.accessToken) )
             dispatch( setRefreshToken(response.data.payload.refreshToken) )
-            props.setAccessToken(response.data.payload.accessToken)
-            props.setRefreshToken(response.data.payload.refreshToken)
             AsyncStorage.setItem('IPserver',Ip).then(()=>{
                 setLoading(false)
                 props.setIsAuth(true)
             })
-
+        }
+        else {
+            setLoading(false)
+            setIsCrashed(true)
+            setTimeout(()=>{
+                setIsCrashed(false)
+            },2500)
         }
     }
+
+
+
+    const [IPAddr, setIPAddr] = useState('')
+    const [isIPChanged, setIsIPChanged] = useState(false)
+    const [isCrashed, setIsCrashed] = useState(false)
+    const [initialIP, setInitialIP] = useState('')
+    const [login, setLogin] = useState('admin')
+    const [pass, setPass] = useState('admin')
+    const [loading, setLoading] = useState(false)
+    const { accessToken, refreshToken } = useSelector( state => state.tokenReducer )
+    const dispatch = useDispatch()
+
+    useEffect(()=>{
+        getIPFromStorage().then(( res ) => {
+            setInitialIP( res )
+        })
+    },[])
+
 
     return (
         <View style={styles.container}>
@@ -50,22 +75,49 @@ const Login = (props) => {
                             label={'Пароль'}
                             onChange={setPass}
                         />
-                        <MyInput
-                            value={IP}
+                        {initialIP
+                        ?
+                            console.log('IP is set', initialIP)
+                        :
+                            <MyInput
+                            value={IPAddr}
                             secure={false}
-                            label={'IP сервера API и БД'}
-                            onChange={setIP}
-                        />
+                            label={'Адрес подключения'}
+                            onChange={setIPAddr}
+                            />
+                        }
+                        {isCrashed
+                            ?
+                            <Text>Неправильный логин, пароль или IP сервера</Text>
+                            :
+                            console.log('notError')
+                        }
                         <TouchableOpacity
                             style={styles.button}
                             onPress={async ()=>{
                                 setLoading(true)
-                                await Auth(login, pass, IP)
+                                await Auth(login, pass, initialIP?initialIP:IPAddr)
+                                //await AsyncStorage.removeItem('IPserver')
                             }}>
                             <Text style={{fontSize:18, color:'#fff'}}>
                                 Enter
                             </Text>
                         </TouchableOpacity>
+                        {isIPChanged || !initialIP
+                            ?
+                            console.log('IPchanging')
+                            :
+                            <TouchableOpacity
+                                style={{marginTop:40}}
+                                onPress={()=>{
+                                    setInitialIP('')
+                                    setIsIPChanged(true)
+                                }}>
+                                <Text style={{fontSize:18, color:'#000'}}>
+                                    Изменить IP
+                                </Text>
+                            </TouchableOpacity>
+                        }
                     </View>
             }
 

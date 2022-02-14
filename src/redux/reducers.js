@@ -1,11 +1,11 @@
-import {SET_ACCESS_TOKEN, SET_REFRESH_TOKEN} from "./actions";
+import { SET_ACCESS_TOKEN, SET_REFRESH_TOKEN } from "./actions";
 
-const initialState = {
+const initialStateToken = {
     accessToken:'',
     refreshToken:''
 }
 
-const tokenReducer = ( state = initialState, action )=>{
+const tokenReducer = ( state = initialStateToken, action )=>{
     switch (action.type) {
         case SET_ACCESS_TOKEN:
             return { ...state, accessToken:action.payload }
@@ -16,4 +16,5 @@ const tokenReducer = ( state = initialState, action )=>{
     }
 }
 
-export default tokenReducer;
+export {tokenReducer};
+

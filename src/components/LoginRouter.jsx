@@ -5,8 +5,6 @@ import AppRouter from "./AppRouter";
 
 const LoginRouter = () => {
     const [isAuth, setIsAuth] = useState(false)
-    const [accessToken, setAccessToken] = useState('')
-    const [refreshToken, setRefreshToken] = useState('')
 
     return (
         <View style={styles.container}>
@@ -18,9 +16,7 @@ const LoginRouter = () => {
                         />
                         :
                         <Login
-                            setIsAuth={ setIsAuth }
-                            setAccessToken={ setAccessToken }
-                            setRefreshToken={ setRefreshToken }
+                            setIsAuth={setIsAuth}
                         />
                 }
         </View>

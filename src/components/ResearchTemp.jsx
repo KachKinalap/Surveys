@@ -1,9 +1,7 @@
 import React from 'react';
 import {SafeAreaView, Text, StyleSheet, View, TouchableOpacity} from "react-native";
-import { useSelector, useDispatch } from 'react-redux'
 
 const ResearchTemp = (props) => {
-    const {accessToken, refreshToken} = useSelector( state=>state.tokenReducer )
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity
@@ -11,8 +9,6 @@ const ResearchTemp = (props) => {
                 onPress={()=>{
                     props.setRsch(props.rsch.surveys)
                     props.navigation.navigate('Surveys')
-                    console.log('accessToken:\n', accessToken)
-                    console.log('refreshToken:\n', refreshToken)
                 }}
             >
                 <Text style={styles.title}>{props.rsch.title?props.rsch.title:'Без названия'}</Text>

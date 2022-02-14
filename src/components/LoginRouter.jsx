@@ -14,15 +14,13 @@ const LoginRouter = () => {
                     isAuth
                         ?
                         <AppRouter
-                            accessToken={ accessToken }
-                            refreshToken={ refreshToken }
                             setIsAuth={ setIsAuth }
                         />
                         :
                         <Login
-                            setIsAuth={setIsAuth}
-                            setAccessToken={setAccessToken}
-                            setRefreshToken={setRefreshToken}
+                            setIsAuth={ setIsAuth }
+                            setAccessToken={ setAccessToken }
+                            setRefreshToken={ setRefreshToken }
                         />
                 }
         </View>

@@ -45,7 +45,7 @@ export async function getResearches(accessToken) {
     try{
         const authStr = 'Bearer '+ accessToken
         const URL = await SURV_URL()
-        const resp = await axios.get(`${URL}research`, { headers: { Authorization: authStr } })
+        const resp = await axios.get(`${URL}research?count=100`, { headers: { Authorization: authStr } })
         return resp
     } catch (e) {
         console.log(e)

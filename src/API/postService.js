@@ -37,7 +37,8 @@ export async function getToken(login, password, IP) {
         })
         return resp
     } catch (e) {
-        console.log(e)
+        console.log('e.name: ' ,e.name)
+        console.log('e.message: ' ,e.message)
         return e
     }
 }

@@ -3,7 +3,7 @@ import {SafeAreaView, Text, StyleSheet, View, TouchableOpacity} from "react-nati
 import { useSelector, useDispatch } from 'react-redux'
 
 const ResearchTemp = (props) => {
-    const {accessToken, refreshToken} = useSelector( state=>state.tokenReducer )
+    const {accessToken, refreshToken} = useSelector( state=>state.tokensReducer )
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity

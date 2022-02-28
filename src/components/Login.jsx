@@ -6,13 +6,37 @@ import '@react-navigation/native'
 import Loader from "../UI/Loader";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector, useDispatch } from 'react-redux'
-import {setAccessToken, setRefreshToken} from "../redux/actions";
+import { setAccessToken, setRefreshToken } from "../redux/tokens/tokensActions";
+import { setIP } from "../redux/IPaddress/IPActions";
+import Timer from "../UI/Timer";
 
 const Login = (props) => {
 
+    const [IPAddr, setIPAddr] = useState('')
+    const [isIPChanged, setIsIPChanged] = useState(false)
+    const [isCrashed, setIsCrashed] = useState(false)
+    const [isDelayOut, setIsDelayOut] = useState(false)
+    const [initialIP, setInitialIP] = useState('')
+    const [login, setLogin] = useState('admin')
+    const [pass, setPass] = useState('admin')
+    const [loading, setLoading] = useState(false)
+    const { accessToken, refreshToken } = useSelector( state => state.tokensReducer )
+    const { IPaddress } = useSelector( state => state.IPReducer )
+    console.log('accessToken: ',accessToken)
+    console.log('IPaddress: ',IPaddress)
+    const dispatch = useDispatch()
+    // useEffect(()=>{
+    //     getIPFromStorage().then(( res ) => {
+    //         setInitialIP( res )
+    //     })
+    // },[])
+
     const getIPFromStorage = async()=>{
-        const IP = await AsyncStorage.getItem('IPserver')
-        if(IP){
+        // const IP = await AsyncStorage.getItem('IPserver')
+        // if(IP){
+        //     return IP
+        // }
+        if(IPFromRedux){
             return IP
         }
         return ''
@@ -21,46 +45,43 @@ const Login = (props) => {
     const Auth = async (userLogin, password, Ip)=> {
         const response =  await getToken(userLogin, password, Ip)
         if(response.status === 200){
-            dispatch( setAccessToken(response.data.payload.accessToken) )
-            dispatch( setRefreshToken(response.data.payload.refreshToken) )
-            AsyncStorage.setItem('IPserver',Ip).then(()=>{
-                setLoading(false)
-                props.setIsAuth(true)
-            })
+
+            await dispatch( setAccessToken(response.data.payload.accessToken) )
+            await dispatch( setRefreshToken(response.data.payload.refreshToken) )
+            console.log('Auth_IP: ',Ip)
+            await dispatch( setIP(Ip) )
+            setLoading(false)
+            props.setIsAuth(true)
+
+            // AsyncStorage.setItem('IPserver',Ip).then(()=>{
+            //     setLoading(false)
+            //     props.setIsAuth(true)
+            // })
         }
         else {
-            setLoading(false)
-            setIsCrashed(true)
-            setTimeout(()=>{
-                setIsCrashed(false)
-            },2500)
+            if(response.message === "Request failed with status code 500"){
+                setLoading(false)
+                setIsCrashed(true)
+                setTimeout(()=>{
+                    setIsCrashed(false)
+                },2500)
+            }
         }
+
     }
-
-
-
-    const [IPAddr, setIPAddr] = useState('')
-    const [isIPChanged, setIsIPChanged] = useState(false)
-    const [isCrashed, setIsCrashed] = useState(false)
-    const [initialIP, setInitialIP] = useState('')
-    const [login, setLogin] = useState('admin')
-    const [pass, setPass] = useState('admin')
-    const [loading, setLoading] = useState(false)
-    const { accessToken, refreshToken } = useSelector( state => state.tokenReducer )
-    const dispatch = useDispatch()
-    console.log('accessToken\n', accessToken,`\n`,'refreshToken\n', refreshToken)
-    useEffect(()=>{
-        getIPFromStorage().then(( res ) => {
-            setInitialIP( res )
-        })
-    },[])
-
 
     return (
         <View style={styles.container}>
             {loading
                 ?
+                <View style={{width:'100%', height:'100%'}}>
                     <Loader/>
+                    <Timer
+                        setIsDelayOut={setIsDelayOut}
+                        setLoading={setLoading}
+                        time={20}
+                    />
+                </View>
                 :
                     <View style={styles.container}>
                         <MyInput
@@ -75,9 +96,9 @@ const Login = (props) => {
                             label={'Пароль'}
                             onChange={setPass}
                         />
-                        {initialIP
+                        {IPaddress
                         ?
-                            console.log('IP is set', initialIP)
+                            console.log(' ')
                         :
                             <MyInput
                             value={IPAddr}
@@ -88,29 +109,39 @@ const Login = (props) => {
                         }
                         {isCrashed
                             ?
-                            <Text>Неправильный логин, пароль или IP сервера</Text>
+                            <Text>Неправильный логин или пароль</Text>
                             :
-                            console.log('notError')
+                            console.log(' ')
+                        }
+
+                        {isDelayOut
+                            ?
+                            <Text>Проблемы с подключением</Text>
+                            :
+                            console.log(' ')
                         }
                         <TouchableOpacity
                             style={styles.button}
                             onPress={async ()=>{
                                 setLoading(true)
-                                await Auth(login, pass, initialIP?initialIP:IPAddr)
+                                //await Auth(login, pass, initialIP?initialIP:IPAddr)
+                                console.log('проверка перед Auth: ',IPaddress?IPaddress:IPAddr)
+                                await Auth(login, pass, IPaddress?IPaddress:IPAddr)
                                 //await AsyncStorage.removeItem('IPserver')
                             }}>
                             <Text style={{fontSize:18, color:'#fff'}}>
                                 Enter
                             </Text>
                         </TouchableOpacity>
-                        {isIPChanged || !initialIP
+                        {isIPChanged || !IPaddress
                             ?
-                            console.log('IPchanging')
+                            console.log(' ')
                             :
                             <TouchableOpacity
                                 style={{marginTop:40}}
                                 onPress={()=>{
-                                    setInitialIP('')
+                                    //setInitialIP('')
+                                    dispatch( setIP('') )
                                     setIsIPChanged(true)
                                 }}>
                                 <Text style={{fontSize:18, color:'#000'}}>
@@ -120,8 +151,6 @@ const Login = (props) => {
                         }
                     </View>
             }
-
-
         </View>
     );
 };

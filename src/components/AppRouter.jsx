@@ -11,8 +11,13 @@ import ActiveSurvey from "./ActiveSurvey";
 import {useSelector} from "react-redux";
 
 const AppRouter = (props) => {
+
+    const { IPaddress } = useSelector( state => state.IPReducer )
+    console.log('IPFromReduxAppRouter: ' ,IPaddress)
+
     //почему-то из пропсов напрямую токен сохраняться не хочет, что ж, у меня в запасе всегда пара костылей...
-    const { accessToken, refreshToken } = useSelector( state => state.tokenReducer )
+    const { accessToken, refreshToken } = useSelector( state => state.tokensReducer )
+    console.log('tokenAppRouter: ' ,accessToken)
     //локация
     const [location, setLocation] = useState(null)
     //состояние для кольца загрузки

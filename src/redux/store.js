@@ -1,6 +1,7 @@
 import {createStore, combineReducers, applyMiddleware} from 'redux'
 import thunk from 'redux-thunk'
-import {tokenReducer}  from "./reducers";
+import { tokensReducer }  from "./tokens/tokensReducer";
+import { IPReducer }  from "./IPaddress/IPReducer";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2'
 import { persistStore, persistReducer } from 'redux-persist'
@@ -11,7 +12,7 @@ const persistConfig = {
     stateReconciler: autoMergeLevel2
 };
 
-const rootReducer = combineReducers({tokenReducer})
+const rootReducer = combineReducers({tokensReducer, IPReducer})
 
 export const persistedReducer = persistReducer(persistConfig, rootReducer);
 

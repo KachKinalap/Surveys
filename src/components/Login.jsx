@@ -16,47 +16,22 @@ const Login = (props) => {
     const [isIPChanged, setIsIPChanged] = useState(false)
     const [isCrashed, setIsCrashed] = useState(false)
     const [isDelayOut, setIsDelayOut] = useState(false)
-    const [initialIP, setInitialIP] = useState('')
-    const [login, setLogin] = useState('admin')
-    const [pass, setPass] = useState('admin')
+    const [login, setLogin] = useState('interviewer')
+    const [pass, setPass] = useState('interviewer')
     const [loading, setLoading] = useState(false)
     const { accessToken, refreshToken } = useSelector( state => state.tokensReducer )
     const { IPaddress } = useSelector( state => state.IPReducer )
-    console.log('accessToken: ',accessToken)
-    console.log('IPaddress: ',IPaddress)
     const dispatch = useDispatch()
-    // useEffect(()=>{
-    //     getIPFromStorage().then(( res ) => {
-    //         setInitialIP( res )
-    //     })
-    // },[])
-
-    const getIPFromStorage = async()=>{
-        // const IP = await AsyncStorage.getItem('IPserver')
-        // if(IP){
-        //     return IP
-        // }
-        if(IPFromRedux){
-            return IP
-        }
-        return ''
-    }
 
     const Auth = async (userLogin, password, Ip)=> {
         const response =  await getToken(userLogin, password, Ip)
         if(response.status === 200){
-
-            await dispatch( setAccessToken(response.data.payload.accessToken) )
-            await dispatch( setRefreshToken(response.data.payload.refreshToken) )
-            console.log('Auth_IP: ',Ip)
+            await dispatch( setAccessToken(response.data.accessToken) )
+            await dispatch( setRefreshToken(response.data.refreshToken) )
             await dispatch( setIP(Ip) )
+            await AsyncStorage.setItem('IPserver', Ip)
             setLoading(false)
             props.setIsAuth(true)
-
-            // AsyncStorage.setItem('IPserver',Ip).then(()=>{
-            //     setLoading(false)
-            //     props.setIsAuth(true)
-            // })
         }
         else {
             if(response.message === "Request failed with status code 500"){
@@ -64,7 +39,7 @@ const Login = (props) => {
                 setIsCrashed(true)
                 setTimeout(()=>{
                     setIsCrashed(false)
-                },2500)
+                },5000)
             }
         }
 
@@ -124,10 +99,7 @@ const Login = (props) => {
                             style={styles.button}
                             onPress={async ()=>{
                                 setLoading(true)
-                                //await Auth(login, pass, initialIP?initialIP:IPAddr)
-                                console.log('проверка перед Auth: ',IPaddress?IPaddress:IPAddr)
                                 await Auth(login, pass, IPaddress?IPaddress:IPAddr)
-                                //await AsyncStorage.removeItem('IPserver')
                             }}>
                             <Text style={{fontSize:18, color:'#fff'}}>
                                 Enter

@@ -4,18 +4,19 @@ import SurveyTemp from "./SurveyTemp";
 import Loader from "../UI/Loader";
 
 const Surveys = (props) => {
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
             {
-                props.currRsch
+                props.route.params.surveys
                     ?
-                    props.currRsch.map( (surv) =>
+                    props.route.params.surveys.map( (surv) =>
                         <SurveyTemp
                             key={surv.id}
                             data={surv}
                             navigation={props.navigation}
-                            setSurv={props.setSurv}
+                            setSurv={props.route.params.setSurv}
                         />
                     )
                     :

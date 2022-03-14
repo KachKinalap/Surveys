@@ -1,197 +1,254 @@
-import React, {useState, useMemo} from 'react';
-import {View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity, Alert} from 'react-native'
+import React, {useState, useMemo, useEffect} from 'react';
+import {View, Text, StyleSheet, ScrollView, Modal, TouchableOpacity, Alert, Image} from 'react-native'
 import {getId} from "../utils/genId";
 import Multiple from "../UI/Multiple";
 import Single from "../UI/Single";
 import Open from "../UI/Open";
 import MyButton from "../UI/MyButton";
-import {sendSurvey} from "../API/postService";
+import { sendSurvey } from "../API/postService";
 import Loader from "../UI/Loader";
+import { useSelector, useDispatch } from "react-redux";
+import { setQueue, deleteAllFromQueue } from "../redux/queue/queueActions";
 
 const ActiveSurvey = (props) => {
 
-    const beginForQ = useMemo(() => new Date(), [props.currSurv]);
+    const survey = useSelector( state => state.surveyReducer.survey )
+    //console.log('survey to pass: \n', survey)
+    const dispatch = useDispatch()
+    const beginForQ = useMemo(() => new Date(), [survey]);
 
-    //состояние для статуса загрузки
-    const [statusText, setStatusText] = useState('')
-    const [statusVisible, setStatusVisible] = useState(false)
+    if(survey.questions.length === 0){
+        return (
+            <View style={styles.mainCont}>
+                <Text style={styles.popupText}>
+                    К сожалению, в этом опросе нет вопросов
+                </Text>
+                <Image
+                    style={styles.emptyImage}
+                    source={require('../assets/images/empty.png')}
+                    resizeMode='contain'
+                />
+                <MyButton
+                    title={"К списку"}
+                    onPress={()=>{
+                        props.navigation.navigate('Surveys')
+                    }}
 
-    //состояние для модального окна
-    const [modalVisible, setModalVisible] = useState(false)
+                />
+            </View>
+        );
+    }
+    else{
+        const { accessToken, refreshToken } = useSelector( state => state.tokensReducer )
+        //состояние для статуса загрузки
+        const [statusText, setStatusText] = useState('')
+        const [statusVisible, setStatusVisible] = useState(false)
 
-    //состояние для кольца загрузки
-    const [loading, setLoading] = useState(false)
+        //состояние для модального окна
+        const [modalVisible, setModalVisible] = useState(false)
 
-    //состояние для кнопок при финальной отправке, блокировка
-    const [finishDisabled, setFinishDisabled] = useState(false)
+        //состояние для кольца загрузки
+        const [loading, setLoading] = useState(false)
 
-    //состояние для проверки готовности человека к опросу
-    const [isReady, setIsReady] = useState(false)
+        //состояние для кнопок при финальной отправке, блокировка
+        const [finishDisabled, setFinishDisabled] = useState(false)
 
-    //номер текущего вопроса
-    const [currInd, setCurrInd] = useState(0)
+        //состояние для проверки готовности человека к опросу
+        const [isReady, setIsReady] = useState(false)
 
-    //формат текущего вопроса:множественный ответ, одиночный или открытый
-    const [type, setType] = useState(props.currSurv.questions[currInd]?.type)
+        //номер текущего вопроса
+        const [currInd, setCurrInd] = useState(0)
 
-    //устанавливаем тот самый тип таким образом:
-    useMemo(() => setType(props.currSurv.questions[currInd]?.type), [currInd])
+        //формат текущего вопроса:множественный ответ, одиночный или открытый
+        const [type, setType] = useState(survey?.questions[currInd]?.type ?? 'none')
 
-    //формирование ответного запроса с пройденным опросом
-    const [filledSurvey, setFilledSurvey] = useState({
-        id:props.currSurv.id,
-        instanceId:getId(),
-        latitude: props.location.coords.latitude,
-        longitude: props.location.coords.longitude,
-        beginDate:new Date(),
-        endDate:new Date(),
-        completed:false,
-        questions:[]
-    })
-    return (
-        loading
-        ?
-        <Loader/>
-        :
-        <View style={styles.mainCont}>
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                    setModalVisible(!modalVisible);
-                }}
-            >
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <Text style={styles.modalText}>Вы точно хотите закончить тестирование?</Text>
-                        <View style={styles.buttonWrap}>
-                            <TouchableOpacity
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={async() => {
-                                    setModalVisible(!modalVisible)
-                                    setFinishDisabled(true)
-                                    setLoading(true)
-                                    let totalRes = filledSurvey
-                                    totalRes.endDate = new Date()
-                                    totalRes.completed = true
-                                    console.log(totalRes)
-                                    sendSurvey(props.token, totalRes)
-                                        .then(()=>{
-                                            setLoading(false)
-                                            setStatusText('Опрос успешно отправлен, сейчас вы будете автоматически перенаправлены на страницу с опросами')
-                                            setStatusVisible(true)
-                                            setTimeout(()=>{
-                                                props.navigation.navigate('Surveys')
-                                            },2000)
-                                        })
-                                }}
-                            >
-                                <Text style={styles.textStyle}>Yes</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => setModalVisible(!modalVisible)}
-                            >
-                                <Text style={styles.textStyle}>No</Text>
-                            </TouchableOpacity>
+        //устанавливаем тот самый тип таким образом:
+        useMemo(() => setType(survey?.questions[currInd]?.type ?? 'none'), [currInd])
+
+        //формирование ответного запроса с пройденным опросом
+        const [filledSurvey, setFilledSurvey] = useState({
+            id:survey.id,
+            instanceId:getId(),
+            latitude: props.route.params.location.coords.latitude,
+            longitude: props.route.params.location.coords.longitude,
+            beginDate:new Date(),
+            endDate:new Date(),
+            completed:false,
+            questions:[]
+        })
+
+        const addToQueue = async(surveyCurr)=>{
+            const surveyToQueue = {surveyCurr, additional:{title:survey.title, description:survey.description}}
+            await dispatch( setQueue( surveyToQueue ) )
+        }
+
+        return (
+            loading
+                ?
+                <Loader/>
+                :
+                <View style={styles.mainCont}>
+                    <Modal
+                        animationType="fade"
+                        transparent={true}
+                        visible={modalVisible}
+                        onRequestClose={() => {
+                            Alert.alert("Modal has been closed.");
+                            setModalVisible(!modalVisible);
+                        }}
+                    >
+                        <View style={styles.centeredView}>
+                            <View style={styles.modalView}>
+                                <Text style={styles.modalText}>Вы точно хотите закончить тестирование?</Text>
+                                <View style={styles.buttonWrap}>
+                                    <TouchableOpacity
+                                        style={[styles.button, styles.buttonClose]}
+                                        onPress={async() => {
+                                            setModalVisible(!modalVisible)
+                                            setFinishDisabled(true)
+                                            setLoading(true)
+                                            let totalRes = filledSurvey
+                                            totalRes.endDate = new Date()
+                                            totalRes.completed = true
+                                            sendSurvey(accessToken, totalRes)
+                                                .then((resolve)=>{
+                                                    //успех
+                                                    //console.log("resolveAfterSending: ",resolve)
+                                                    setLoading(false)
+                                                    setStatusText('Опрос успешно отправлен, сейчас вы будете автоматически перенаправлены на страницу с опросами')
+                                                    setStatusVisible(true)
+                                                    setTimeout(()=>{
+                                                        props.navigation.navigate('Surveys')
+                                                    },2000)
+                                                    //ошибка
+                                                }, async(reject)=>{
+                                                    addToQueue(totalRes).then(
+                                                    //успех
+                                                    ()=>{
+                                                        setStatusText('При отправке возникла ошибка. Опрос перенаправлен в очередь.')
+                                                    },
+                                                    //неудача
+                                                    ()=>{
+                                                        setStatusText('При отправке возникла ошибка. Ошибка перенаправления опроса в очередь. Пройдите опрос ещё раз')
+                                                    }
+                                                    )
+                                                    setLoading(false)
+                                                    setStatusVisible(true)
+                                                    //console.log('вот твой редакс, мальчик: \n' , queue)
+                                                    setTimeout(()=>{
+                                                        props.navigation.navigate('Surveys')
+                                                    },2000)
+                                                })
+
+                                        }}
+                                    >
+                                        <Text style={styles.textStyle}>Yes</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.button, styles.buttonClose]}
+                                        onPress={() => setModalVisible(!modalVisible)}
+                                    >
+                                        <Text style={styles.textStyle}>No</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
                         </View>
-                    </View>
-                </View>
-            </Modal>
-            {
-            isReady
-            ?
-                <View style={styles.contQ}>
+                    </Modal>
                     {
-                        //логика для имени вопроса ниже
-                    }
-                    <View >
-                        <Text style={styles.titleQ}>{props.currSurv.questions[currInd].title}</Text>
-                    </View>
-                    {
-                        //логика для вариантов ответа ниже
-                    }
-                    {statusVisible
-                    ?
-                        <View style={styles.popup}>
-                            <Text style={styles.popupText}>{statusText}</Text>
-                        </View>
-                    :
-                        console.log('')
-                    }
-                    <ScrollView style={styles.answCont}>
-                        {
-
-                            type === "multiple"
-                                ?
-                                <Multiple
-                                    data={props.currSurv.questions[currInd].answers}
-                                    askID={props.currSurv.questions[currInd].id}
-                                    result={filledSurvey}
-                                    setResult={setFilledSurvey}
-                                    create={beginForQ}
-                                />
-                                :
-                                type === "single"
-                                    ?
-                                    <Single
-                                        askID={props.currSurv.questions[currInd].id}
-                                        data={props.currSurv.questions[currInd].answers}
-                                        result={filledSurvey}
-                                        setResult={setFilledSurvey}
-                                        create={beginForQ}
-                                    />
-                                    :
-                                    <Open
-                                        askID={props.currSurv.questions[currInd].id}
-                                        ansID={props.currSurv.questions[currInd].answers[0].id}
-                                        askText={props.currSurv.questions[currInd].answers[0].text}
-                                        result={filledSurvey}
-                                        setResult={setFilledSurvey}
-                                        create={beginForQ}
-                                    />
-                        }
-                    </ScrollView>
-                    {
-                        //логика для кнопок ниже
-                    }
-                    <View style={styles.buttonCont}>
-                        <MyButton
-                            title={"Назад"}
-                            disabled={(currInd===0) || finishDisabled}
-                            onPress={((currInd-1) < 0)?()=>{}:()=>setCurrInd(currInd-1)}
-                        />
-                        {
-                            (currInd===props.currSurv.questions.length-1)
+                        isReady
                             ?
-                                <MyButton
-                                    title={"Завершить"}
-                                    disabled={finishDisabled}
-                                    onPress={()=>{
-                                        setModalVisible(true)
-                                    }}
+                            <View style={styles.contQ}>
+                                {
+                                    //логика для имени вопроса ниже
+                                }
+                                <View >
+                                    <Text style={styles.titleQ}>{survey.questions[currInd].title}</Text>
+                                </View>
+                                {
+                                    //логика для вариантов ответа ниже
+                                }
+                                {statusVisible
+                                    ?
+                                    <View style={styles.popup}>
+                                        <Text style={styles.popupText}>{statusText}</Text>
+                                    </View>
+                                    :
+                                    console.log('')
+                                }
+                                <ScrollView style={styles.answCont}>
+                                    {
 
-                                />
+                                        type === "multiple"
+                                            ?
+                                            <Multiple
+                                                data={survey.questions[currInd].answers}
+                                                askID={survey.questions[currInd].id}
+                                                result={filledSurvey}
+                                                setResult={setFilledSurvey}
+                                                create={beginForQ}
+                                            />
+                                            :
+                                            type === "single"
+                                                ?
+                                                <Single
+                                                    askID={survey.questions[currInd].id}
+                                                    data={survey.questions[currInd].answers}
+                                                    result={filledSurvey}
+                                                    setResult={setFilledSurvey}
+                                                    create={beginForQ}
+                                                />
+                                                :
+                                                <Open
+                                                    askID={survey.questions[currInd].id}
+                                                    ansID={survey.questions[currInd].answers[0].id}
+                                                    askText={survey.questions[currInd].answers[0].text}
+                                                    result={filledSurvey}
+                                                    setResult={setFilledSurvey}
+                                                    create={beginForQ}
+                                                />
+                                    }
+                                </ScrollView>
+                                {
+                                    //логика для кнопок ниже
+                                }
+                                <View style={styles.buttonCont}>
+                                    <MyButton
+                                        title={"Назад"}
+                                        disabled={(currInd===0) || finishDisabled}
+                                        onPress={((currInd-1) < 0)?()=>{}:()=>setCurrInd(currInd-1)}
+                                    />
+                                    {
+                                        (currInd===survey.questions.length-1)
+                                            ?
+                                            <MyButton
+                                                title={"Завершить"}
+                                                disabled={finishDisabled}
+                                                onPress={()=>{
+                                                    setModalVisible(true)
+                                                }}
+
+                                            />
+                                            :
+                                            <MyButton
+                                                title={"Далее"}
+                                                onPress={()=>{setCurrInd(currInd+1);
+                                                }}
+                                            />
+                                    }
+                                </View>
+                            </View>
                             :
-                                <MyButton
-                                    title={"Далее"}
-                                    onPress={()=>{setCurrInd(currInd+1);
-                                    }}
-                                />
-                        }
-                    </View>
+                            //тут проверяем готовность
+                            <View style={styles.readyScreen}>
+                                <Text style={{fontSize:24, textAlign:'center'}}>Вы готовы к прохождению опроса?</Text>
+                                <MyButton title={'Начать'} onPress={async()=> {
+                                    setIsReady(true)
+                                }}/>
+                            </View>
+                    }
                 </View>
-            :
-                //тут проверяем готовность
-                <View style={styles.readyScreen}>
-                    <Text style={{fontSize:24, textAlign:'center'}}>Вы готовы к прохождению опроса?</Text>
-                    <MyButton title={'Начать'} onPress={()=>setIsReady(true)}/>
-                </View>
-            }
-        </View>
-    );
+        );
+    }
 };
 
 const styles = StyleSheet.create({
@@ -286,6 +343,10 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color:'black',
         textAlign:'center'
+    },
+    emptyImage:{
+        height:'50%',
+        marginTop:50
     }
 })
 

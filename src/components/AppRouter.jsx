@@ -1,70 +1,83 @@
-import React, {useState, useEffect} from 'react';
-import {View} from 'react-native';
-import Loader from "../UI/Loader";
+import React, {useEffect, useState} from 'react';
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Researches from "./Researches";
-import Surveys from "./Surveys";
-import { getResearches } from '../API/postService'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import Settings from "./Settings";
+import SurveyRouter from "./SurveyRouter";
+import Queue from "./Queue";
 import {getCoord} from "../API/geo";
-import ActiveSurvey from "./ActiveSurvey";
+import {getSurveys} from "../API/postService";
 import {useSelector} from "react-redux";
+import Surveys from "./Surveys";
 
 const AppRouter = (props) => {
 
-    const { IPaddress } = useSelector( state => state.IPReducer )
-    console.log('IPFromReduxAppRouter: ' ,IPaddress)
-
-    //почему-то из пропсов напрямую токен сохраняться не хочет, что ж, у меня в запасе всегда пара костылей...
     const { accessToken, refreshToken } = useSelector( state => state.tokensReducer )
-    console.log('tokenAppRouter: ' ,accessToken)
-    //локация
+    console.log('accessTokenFromAppRouter:\t', accessToken)
+    //console.log('tokenAppRouter: ' ,accessToken)
     const [location, setLocation] = useState(null)
     //состояние для кольца загрузки
     const [loading, setLoading] = useState(true)
     //состояние для json получаемых исследований
-    const [rsrchs, setRsrchs] = useState('')
-    //конкретное исследование, опросы которого будут отображаться при клике на него
-    const [currRsch, setCurrRsch] = useState([])
-    //конкретный опрос, который будет передаваться в ActiveSurvey для его прохождения
-    const [currSurv, setCurrSurv] = useState([])
+    const [surveys, setSurveys] = useState('')
+
+    const Tab = createBottomTabNavigator()
 
     useEffect(()=>{
-        getCoord().then(
-            (result)=>{
-                setLocation( result )
-            }
-        )
+        try{
+            getCoord().then(
+                (result)=>{
+                    setLocation( result )
+                    console.log('location:\t', result)
+                    getSurveys(accessToken).then((result)=>{
+                        console.log('surveys from AppRouter: ', result)
+                        setSurveys(result.data.items)
+                        setLoading(false)
+                    })
+                }
+            )
+
+        } catch (e) {
+            console.log('errorFromAppRouter:\n',e)
+        }
     },[])
 
-    useEffect(()=>{
-        getResearches(accessToken).then((result)=>{
-            setRsrchs(result.data.payload.researches)
-            setLoading(false)
-        })
-    },[])
-
-    const Stack = createNativeStackNavigator();
     return (
-            loading
-            ?
-            <View style={{display:'flex', justifyContent:'center', alignItems:'center', width:'100%', height:'100%'}}>
-                <Loader/>
-            </View>
-            :
-            <NavigationContainer>
-                <Stack.Navigator>
-                    <Stack.Screen name='Researches' options={{ title: 'Researches' }}>
-                        {(props) => <Researches {...props} researches={rsrchs} setRsch={setCurrRsch}/>}
-                    </Stack.Screen>
-                    <Stack.Screen name="Surveys" options={{ title: 'Surveys' }}>
-                        {(props) => <Surveys {...props} currRsch={currRsch} setSurv={setCurrSurv} location={location}/>}
-                    </Stack.Screen>
-                    <Stack.Screen name="ActiveSurvey" options={{ title: 'ActiveSurvey' }}>
-                        {(props) => <ActiveSurvey {...props} currSurv={currSurv} token={accessToken} location={location}/>}
-                    </Stack.Screen>
-                </Stack.Navigator>
-            </NavigationContainer>
+        <NavigationContainer>
+            <Tab.Navigator
+                initialRouteName={'Опросы'}
+                screenOptions={({ route }) => ({
+                    tabBarIcon: ({color, size }) => {
+                        let iconName;
+
+                        if (route.name === 'Опросы') {
+                            iconName = 'help-outline'
+                        }
+                        else if (route.name === 'Ожидание') {
+                            iconName = 'archive-outline'
+                        }
+                        else if (route.name === 'Настройки') {
+                            iconName = 'settings'
+                        }
+                        // You can return any component that you like here!
+                        return <Ionicons name={iconName} size={size} color={color} />;
+                    },
+                    tabBarActiveTintColor: 'sandybrown',
+                    tabBarInactiveTintColor: 'gray',
+                    unmountOnBlur:true
+                })}
+            >
+                <Tab.Screen name="Опросы" component={()=><SurveyRouter
+                                                            surveys={surveys}
+                                                            location={location}
+                                                            loading={loading}
+                                                            token={accessToken}
+                                                         />}
+                />
+                <Tab.Screen name="Ожидание" component={()=><Queue/>} />
+                <Tab.Screen name="Настройки" component={()=><Settings setIsAuth={props.setIsAuth}/>} />
+            </Tab.Navigator>
+        </NavigationContainer>
     );
 };
 

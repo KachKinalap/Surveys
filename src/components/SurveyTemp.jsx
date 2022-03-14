@@ -1,13 +1,19 @@
 import React from 'react';
 import {SafeAreaView, Text, StyleSheet, View, TouchableOpacity} from "react-native";
-//разные компоненты для research и survey в случае, если понадобится отображать разные вещи, чтобы не усложнять логику одного компонента, а добавить немного в один из :)
+import { useDispatch } from "react-redux";
+import { setSurvey } from "../redux/survey/surveyActions";
+
 const SurveyTemp = (props) => {
+
+    const dispatch = useDispatch()
+
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity
                 style={styles.itemCont}
-                onPress={()=>{
+                onPress={async()=>{
                     props.setSurv(props.data)
+                    await dispatch( setSurvey( props.data ) )
                     props.navigation.navigate('ActiveSurvey')
                 }}
             >

@@ -5,14 +5,15 @@ export async function sendSurvey(token, data) {
     let survey = JSON.stringify(data)
     const URL = await SURV_URL()
     try {
-        const response = await axios.post(`${URL}survey/filled`, survey, {
+        const response = await axios.post(`${URL}surveys/filled`, survey, {
             headers: {
                 "Authorization":`Bearer ${token}`,
+                //"Authorization":`Berer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
-        if (response.status === 200) {
-            return response.data;
+        if (response.status === 200 || response.status === 201) {
+            return response;
         }
     } catch (e) {
         console.log(e.response ?? "");
@@ -43,14 +44,15 @@ export async function getToken(login, password, IP) {
     }
 }
 
-export async function getResearches(accessToken) {
+export async function getSurveys(accessToken) {
     try{
         const authStr = 'Bearer '+ accessToken
         const URL = await SURV_URL()
-        const resp = await axios.get(`${URL}research?count=100`, { headers: { Authorization: authStr } })
-        console.log('resches\n', resp)
+        const resp = await axios.get(`${URL}surveys`, { headers: { Authorization: authStr } })
+    console.log(resp)
         return resp
     } catch (e) {
+        console.log(e)
         return e
     }
 }

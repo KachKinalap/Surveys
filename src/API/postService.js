@@ -8,7 +8,6 @@ export async function sendSurvey(token, data) {
         const response = await axios.post(`${URL}surveys/filled`, survey, {
             headers: {
                 "Authorization":`Bearer ${token}`,
-                //"Authorization":`Berer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
@@ -49,7 +48,6 @@ export async function getSurveys(accessToken) {
         const authStr = 'Bearer '+ accessToken
         const URL = await SURV_URL()
         const resp = await axios.get(`${URL}surveys`, { headers: { Authorization: authStr } })
-    console.log(resp)
         return resp
     } catch (e) {
         console.log(e)

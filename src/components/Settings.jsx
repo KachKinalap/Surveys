@@ -3,21 +3,12 @@ import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Modal, Al
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from "react-redux";
 import { setAccessToken, setRefreshToken } from "../redux/tokens/tokensActions";
-//import Background from "../API/Background";
-import { deleteAllFromQueue } from "../redux/queue/queueActions";
 import Background from "../API/Background";
-//TODO передать через пропс состояние логаута и отключить службу перед выходом
 
 const Settings = (props) => {
     const [modalVisible, setModalVisible] = useState(false);
     const dispatch = useDispatch()
     const queue = useSelector(state=>state.queueReducer)
-
-    // useEffect(()=>{
-    //     dispatch( deleteAllFromQueue() )
-    //     console.log("queueSettings: " ,queue)
-    // },[])
-
 
     return (
         <SafeAreaView style={styles.container}>

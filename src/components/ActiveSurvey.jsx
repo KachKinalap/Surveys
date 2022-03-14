@@ -8,12 +8,11 @@ import MyButton from "../UI/MyButton";
 import { sendSurvey } from "../API/postService";
 import Loader from "../UI/Loader";
 import { useSelector, useDispatch } from "react-redux";
-import { setQueue, deleteAllFromQueue } from "../redux/queue/queueActions";
+import { setQueue } from "../redux/queue/queueActions";
 
 const ActiveSurvey = (props) => {
 
     const survey = useSelector( state => state.surveyReducer.survey )
-    //console.log('survey to pass: \n', survey)
     const dispatch = useDispatch()
     const beginForQ = useMemo(() => new Date(), [survey]);
 
@@ -113,9 +112,8 @@ const ActiveSurvey = (props) => {
                                             sendSurvey(accessToken, totalRes)
                                                 .then((resolve)=>{
                                                     //успех
-                                                    //console.log("resolveAfterSending: ",resolve)
                                                     setLoading(false)
-                                                    setStatusText('Опрос успешно отправлен, сейчас вы будете автоматически перенаправлены на страницу с опросами')
+                                                    setStatusText('Опрос успешно отправлен, дождитесь перенаправления.')
                                                     setStatusVisible(true)
                                                     setTimeout(()=>{
                                                         props.navigation.navigate('Surveys')
@@ -129,12 +127,11 @@ const ActiveSurvey = (props) => {
                                                     },
                                                     //неудача
                                                     ()=>{
-                                                        setStatusText('При отправке возникла ошибка. Ошибка перенаправления опроса в очередь. Пройдите опрос ещё раз')
+                                                        setStatusText('Ошибка при отправке и помещении в очередь. Пройдите тест ещё раз.')
                                                     }
                                                     )
                                                     setLoading(false)
                                                     setStatusVisible(true)
-                                                    //console.log('вот твой редакс, мальчик: \n' , queue)
                                                     setTimeout(()=>{
                                                         props.navigation.navigate('Surveys')
                                                     },2000)

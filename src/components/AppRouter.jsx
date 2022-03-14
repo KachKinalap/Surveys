@@ -8,13 +8,11 @@ import Queue from "./Queue";
 import {getCoord} from "../API/geo";
 import {getSurveys} from "../API/postService";
 import {useSelector} from "react-redux";
-import Surveys from "./Surveys";
 
 const AppRouter = (props) => {
 
     const { accessToken, refreshToken } = useSelector( state => state.tokensReducer )
-    console.log('accessTokenFromAppRouter:\t', accessToken)
-    //console.log('tokenAppRouter: ' ,accessToken)
+
     const [location, setLocation] = useState(null)
     //состояние для кольца загрузки
     const [loading, setLoading] = useState(true)
@@ -28,9 +26,7 @@ const AppRouter = (props) => {
             getCoord().then(
                 (result)=>{
                     setLocation( result )
-                    console.log('location:\t', result)
                     getSurveys(accessToken).then((result)=>{
-                        console.log('surveys from AppRouter: ', result)
                         setSurveys(result.data.items)
                         setLoading(false)
                     })
@@ -38,7 +34,7 @@ const AppRouter = (props) => {
             )
 
         } catch (e) {
-            console.log('errorFromAppRouter:\n',e)
+            console.log(e)
         }
     },[])
 
@@ -59,7 +55,7 @@ const AppRouter = (props) => {
                         else if (route.name === 'Настройки') {
                             iconName = 'settings'
                         }
-                        // You can return any component that you like here!
+                        // Возвращает нужную иконку
                         return <Ionicons name={iconName} size={size} color={color} />;
                     },
                     tabBarActiveTintColor: 'sandybrown',

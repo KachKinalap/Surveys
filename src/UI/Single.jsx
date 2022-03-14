@@ -31,7 +31,6 @@ const Single = (props) => {
                             "createdAt": props.create,
                             "beginDate": begin,
                             "endDate": "2021-12-31T00:00:00.000",
-                            //"text": props.data[props.data.findIndex((i)=>+i.id === +newValue)].text
                         }
 
                         const currRes = props.result
@@ -41,7 +40,6 @@ const Single = (props) => {
                     else{
                         const currRes = props.result
                         currRes.questions[ind].answerId = newValue
-                        //currRes.questions[ind].text = props.data[props.data.findIndex((i)=>+i.id === +newValue)].text
                         props.setResult(currRes)
                     }
                     setRadio(newValue);

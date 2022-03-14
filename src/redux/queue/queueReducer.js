@@ -1,7 +1,7 @@
 import { SET_QUEUE } from "./queueActions";
 import { DELETE_ITEM_FROM_QUEUE } from "./queueActions";
 import { DELETE_ALL_FROM_QUEUE } from "./queueActions";
-//import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const initialStateQueue = {
     queue:null
 }
@@ -12,13 +12,9 @@ const queueReducer = ( state = initialStateQueue, action )=>{
             if(state.queue === null){
                 const newQueue = []
                 newQueue.push(action.payload)
-                //await AsyncStorage.setItem('queue', JSON.stringify(newQueue))
                 return { ...state, queue:newQueue }
             }
             else{
-                //const currQueue = JSON.parse(await AsyncStorage.getItem('queue'))
-                //currQueue.push(action.payload)
-                //await AsyncStorage.setItem('queue', JSON.stringify(currQueue))
                 return { ...state, queue: [...state.queue, action.payload] }
             }
 
@@ -28,11 +24,9 @@ const queueReducer = ( state = initialStateQueue, action )=>{
                 const newQueue = state.queue
                 newQueue.splice(ind, 1)
                 if(newQueue.length===0){
-                    //await AsyncStorage.setItem('queue', JSON.stringify(null))
                     return {queue: null}
                 }
                 else{
-                    //await AsyncStorage.setItem('queue', JSON.stringify(newQueue))
                     return {...state, queue: newQueue}
                 }
             }
@@ -41,7 +35,6 @@ const queueReducer = ( state = initialStateQueue, action )=>{
             }
 
         case DELETE_ALL_FROM_QUEUE:
-            //await AsyncStorage.setItem('queue', JSON.stringify(null))
             return {queue: null}
 
         default:

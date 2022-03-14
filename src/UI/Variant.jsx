@@ -1,14 +1,12 @@
 import React, {useState} from 'react';
-import {View, SafeAreaView, TouchableOpacity, Text, StyleSheet} from "react-native";
+import {TouchableOpacity, Text, StyleSheet} from "react-native";
 
 const Variant = (props) => {
     //функция для поиска ответа в конечном массиве, чтобы его удалить
     const isInArray = (i)=>{
         return ((i.id === props.askID) && i.answerId === props.ansID)
     }
-
     const ind = props.result.questions.findIndex(isInArray)
-
     //нажата ли кнопка
     const [pressed, setPressed] = useState(ind !== -1)
 

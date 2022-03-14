@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import { getToken } from '../API/postService'
 import MyInput from "../UI/MyInput";
@@ -16,10 +16,9 @@ const Login = (props) => {
     const [isIPChanged, setIsIPChanged] = useState(false)
     const [isCrashed, setIsCrashed] = useState(false)
     const [isDelayOut, setIsDelayOut] = useState(false)
-    const [login, setLogin] = useState('interviewer')
-    const [pass, setPass] = useState('interviewer')
+    const [login, setLogin] = useState('')
+    const [pass, setPass] = useState('')
     const [loading, setLoading] = useState(false)
-    const { accessToken, refreshToken } = useSelector( state => state.tokensReducer )
     const { IPaddress } = useSelector( state => state.IPReducer )
     const dispatch = useDispatch()
 
@@ -88,7 +87,6 @@ const Login = (props) => {
                             :
                             console.log(' ')
                         }
-
                         {isDelayOut
                             ?
                             <Text>Проблемы с подключением</Text>
@@ -112,7 +110,6 @@ const Login = (props) => {
                             <TouchableOpacity
                                 style={{marginTop:40}}
                                 onPress={()=>{
-                                    //setInitialIP('')
                                     dispatch( setIP('') )
                                     setIsIPChanged(true)
                                 }}>

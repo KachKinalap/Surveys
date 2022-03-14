@@ -1,18 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Loader from "../UI/Loader";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Surveys from "./Surveys";
-import { getSurveys } from '../API/postService';
-import { getCoord } from "../API/geo";
 import ActiveSurvey from "./ActiveSurvey";
-import { useSelector } from "react-redux";
 
 const SurveyRouter = (props) => {
 
     const [currSurv, setCurrSurv] = useState([])
     const Stack = createNativeStackNavigator();
-    //console.log('SurveysRouter', props.surveys)
     return (
             props.loading
             ?

@@ -1,6 +1,6 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 import CountDown from 'react-native-countdown-component';
-
+import React from 'react'
 const Timer = (props) => {
 
     return (

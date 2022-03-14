@@ -6,7 +6,6 @@ const MyButton = (props) => {
     const disabledB = props.disabled
 
     return (
-
             <View style={styles.main}>
                 <TouchableOpacity style={styles.myBtn} onPress={props.onPress?props.onPress:()=>{}} disabled={disabledB}>
                     <Text style={styles.myBtnText}>{props.title}</Text>

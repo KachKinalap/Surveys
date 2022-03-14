@@ -1,18 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import {
     SafeAreaView,
     Text,
     StyleSheet,
     TouchableOpacity,
     ScrollView,
-    View,
     DeviceEventEmitter,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {deleteItemFromQueue, setQueue} from "../redux/queue/queueActions";
-import SurveyTemp from "./SurveyTemp";
 import Loader from "../UI/Loader";
-import {setSurvey} from "../redux/survey/surveyActions";
 import MyButton from "../UI/MyButton";
 
 const Queue = () => {

@@ -5,6 +5,7 @@ import AppRouter from "./AppRouter";
 
 const LoginRouter = () => {
     const [isAuth, setIsAuth] = useState(false)
+
     return (
         <View style={styles.container}>
                 {

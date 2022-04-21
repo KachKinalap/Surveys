@@ -9,19 +9,22 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setAccessToken, setRefreshToken } from "../redux/tokens/tokensActions";
 import { setIP } from "../redux/IPaddress/IPActions";
 import Timer from "../UI/Timer";
+import {isTokenRight} from "../utils/tokenRight";
 
 const Login = (props) => {
-
+    const { accessToken, refreshToken } = useSelector( state => state.tokensReducer )
     const [IPAddr, setIPAddr] = useState('')
     const [isIPChanged, setIsIPChanged] = useState(false)
     const [isCrashed, setIsCrashed] = useState(false)
     const [isDelayOut, setIsDelayOut] = useState(false)
-    const [login, setLogin] = useState('')
-    const [pass, setPass] = useState('')
+    const [login, setLogin] = useState('interviewer')
+    const [pass, setPass] = useState('interviewer')
     const [loading, setLoading] = useState(false)
     const { IPaddress } = useSelector( state => state.IPReducer )
     const dispatch = useDispatch()
-
+    if(isTokenRight(accessToken)){
+        props.setIsAuth(true);
+    }
     const Auth = async (userLogin, password, Ip)=> {
         const response =  await getToken(userLogin, password, Ip)
         if(response.status === 200){

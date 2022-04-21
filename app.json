@@ -20,9 +20,14 @@
       "supportsTablet": true
     },
     "android": {
+      "splash": {
+        "image": "./assets/splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#000000"
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#F4A460"
       },
       "package": "com.kachkinalap.Surveys"
     },

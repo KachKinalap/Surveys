@@ -16,7 +16,7 @@ const LoginRouter = () => {
                         />
                         :
                         <Login
-                            setIsAuth={setIsAuth}
+                            setIsAuth={ setIsAuth }
                         />
                 }
         </View>

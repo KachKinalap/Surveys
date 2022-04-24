@@ -15,7 +15,6 @@ const ActiveSurvey = (props) => {
     const survey = useSelector( state => state.surveyReducer.survey )
     const dispatch = useDispatch()
     const beginForQ = useMemo(() => new Date(), [survey]);
-
     if(survey.questions.length === 0){
         return (
             <View style={styles.mainCont}>
@@ -109,7 +108,7 @@ const ActiveSurvey = (props) => {
                                             let totalRes = filledSurvey
                                             totalRes.endDate = new Date()
                                             totalRes.completed = true
-                                            sendSurvey(accessToken, totalRes)
+                                            sendSurvey(accessToken, totalRes, props.route.params.location.coords)
                                                 .then((resolve)=>{
                                                     //успех
                                                     setLoading(false)

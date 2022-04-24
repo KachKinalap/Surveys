@@ -25,9 +25,8 @@ const AppRouter = (props) => {
         try{
             getCoord().then(
                 (result)=>{
-                    //console.log(result)
-                    setLocation( location )
-                    getSurveys(accessToken).then((result)=>{
+                    setLocation( result )
+                    getSurveys(accessToken, result.coords).then((result)=>{
                         setSurveys(result.data.items)
                         setLoading(false)
                     })

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { SURV_URL } from "./survURL";
 
-export async function sendSurvey(token, data) {
+export async function sendSurvey(token, data, coords) {
     let survey = JSON.stringify(data)
     const URL = await SURV_URL()
     try {
@@ -9,9 +9,12 @@ export async function sendSurvey(token, data) {
             headers: {
                 "Authorization":`Bearer ${token}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            latitude: coords.latitude,
+            longitude: coords.longitude
         });
         if (response.status === 200 || response.status === 201) {
+            console.log('response:\n' ,response);
             return response;
         }
     } catch (e) {
@@ -35,19 +38,20 @@ export async function getToken(login, password, IP) {
                 'content-type': 'application/json'
             }
         })
-        return resp
+        return resp;
     } catch (e) {
-        console.log('e.name: ' ,e.name)
-        console.log('e.message: ' ,e.message)
-        return e
+        console.log('error: \n' ,e);
+        return e;
     }
 }
 
-export async function getSurveys(accessToken) {
+export async function getSurveys(accessToken, coords) {
     try{
         const authStr = 'Bearer '+ accessToken
         const URL = await SURV_URL()
-        const resp = await axios.get(`${URL}surveys`, { headers: { Authorization: authStr } })
+        const resp = await axios.get(`${URL}surveys`, { headers: { Authorization: authStr
+                , latitude: coords.latitude, longitude: coords.longitude
+        } })
         return resp
     } catch (e) {
         console.log(e)

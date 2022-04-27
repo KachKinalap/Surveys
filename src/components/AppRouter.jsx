@@ -7,13 +7,12 @@ import SurveyRouter from "./SurveyRouter";
 import Queue from "./Queue";
 import {getCoord} from "../API/geo";
 import {getSurveys} from "../API/postService";
-import {useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
+import {setLocation} from "../redux/location/locationActions";
 
 const AppRouter = (props) => {
-
+    const dispatch = useDispatch()
     const { accessToken, refreshToken } = useSelector( state => state.tokensReducer )
-
-    const [location, setLocation] = useState(null)
     //состояние для кольца загрузки
     const [loading, setLoading] = useState(true)
     //состояние для json получаемых исследований
@@ -23,9 +22,9 @@ const AppRouter = (props) => {
 
     useEffect(()=>{
         try{
-            getCoord().then(
-                (result)=>{
-                    setLocation( result )
+            getCoord(props.setIsLocationGranted).then(
+                async (result)=> {
+                    await dispatch( setLocation(result) )
                     getSurveys(accessToken, result.coords).then((result)=>{
                         setSurveys(result.data.items)
                         setLoading(false)
@@ -64,7 +63,6 @@ const AppRouter = (props) => {
             >
                 <Tab.Screen name="Опросы" component={()=><SurveyRouter
                                                             surveys={surveys}
-                                                            location={location}
                                                             loading={loading}
                                                             token={accessToken}
                                                          />}

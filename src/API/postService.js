@@ -8,6 +8,7 @@ export async function sendSurvey(token, data, coords) {
         const response = await axios.post(`${URL}surveys/filled`, survey, {
             headers: {
                 "Authorization":`Bearer ${token}`,
+                //"Authorization":`Bearer token`,
                 'Content-Type': 'application/json'
             },
             latitude: coords.latitude,
@@ -18,13 +19,12 @@ export async function sendSurvey(token, data, coords) {
             return response;
         }
     } catch (e) {
-        console.log(e.response ?? "");
         if (e.response?.status === 400) {
             throw new Error(`Status: 400, Error: ${JSON.stringify(e.response?.data)}`);
         } else if (e.response?.status === 422) {
             throw new Error(`Status: 422, Error: ${JSON.stringify(e.response?.data)}`);
         } else {
-            throw new Error(e.message);
+            throw new Error(e.response.data);
         }
     }
     throw new Error("Something wrong with sending survey");

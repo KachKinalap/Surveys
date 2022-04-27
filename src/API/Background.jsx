@@ -9,6 +9,7 @@ const BACKGROUND_FETCH_TASK = 'background-fetch';
 
 TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
     const keys = JSON.parse(await AsyncStorage.getItem('persist:root'))
+    const location = JSON.parse(keys.locationReducer).location
     const accessToken = JSON.parse(keys.tokensReducer).accessToken
     const queue = JSON.parse(keys.queueReducer).queue
     if (accessToken && queue) {
@@ -17,7 +18,7 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
                     const data = edge.surveyCurr
                     if (data) {
                         try {
-                            const result = await sendSurvey(accessToken, data);
+                            const result = await sendSurvey(accessToken, data, location.coords);
                             if (result.status === 200 || result.status === 201) {
                                 DeviceEventEmitter.emit("task", {
                                     instanceId:data.instanceId,

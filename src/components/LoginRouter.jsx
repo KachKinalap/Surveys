@@ -2,21 +2,27 @@ import React, {useState} from 'react';
 import { View, StyleSheet } from 'react-native';
 import Login from "./Login";
 import AppRouter from "./AppRouter";
+import LocationDenied from "./LocationDenied";
 
 const LoginRouter = () => {
     const [isAuth, setIsAuth] = useState(false)
-
+    const [isLocationGranted, setIsLocationGranted] = useState(true)
     return (
         <View style={styles.container}>
                 {
                     isAuth
                         ?
-                        <AppRouter
-                            setIsAuth={ setIsAuth }
-                        />
+                            isLocationGranted
+                            ?
+                            <AppRouter
+                                setIsAuth={ setIsAuth }
+                                setIsLocationGranted = { setIsLocationGranted }
+                            />
+                            :
+                            <LocationDenied/>
                         :
                         <Login
-                            setIsAuth={ setIsAuth }
+                            setIsAuth = { setIsAuth }
                         />
                 }
         </View>

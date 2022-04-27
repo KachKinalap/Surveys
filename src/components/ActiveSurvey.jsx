@@ -38,6 +38,7 @@ const ActiveSurvey = (props) => {
     }
     else{
         const { accessToken, refreshToken } = useSelector( state => state.tokensReducer )
+        const location = useSelector( state => state.locationReducer.location )
         //состояние для статуса загрузки
         const [statusText, setStatusText] = useState('')
         const [statusVisible, setStatusVisible] = useState(false)
@@ -67,16 +68,16 @@ const ActiveSurvey = (props) => {
         const [filledSurvey, setFilledSurvey] = useState({
             id:survey.id,
             instanceId:getId(),
-            latitude: props.route.params.location.coords.latitude,
-            longitude: props.route.params.location.coords.longitude,
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
             beginDate:new Date(),
             endDate:new Date(),
             completed:false,
             questions:[]
         })
 
-        const addToQueue = async(surveyCurr)=>{
-            const surveyToQueue = {surveyCurr, additional:{title:survey.title, description:survey.description}}
+        const addToQueue = async(surveyCurr, error)=>{
+            const surveyToQueue = {surveyCurr, additional:{title:survey.title, description:survey.description, errorSending:error}}
             await dispatch( setQueue( surveyToQueue ) )
         }
 
@@ -108,7 +109,7 @@ const ActiveSurvey = (props) => {
                                             let totalRes = filledSurvey
                                             totalRes.endDate = new Date()
                                             totalRes.completed = true
-                                            sendSurvey(accessToken, totalRes, props.route.params.location.coords)
+                                            sendSurvey(accessToken, totalRes, location.coords)
                                                 .then((resolve)=>{
                                                     //успех
                                                     setLoading(false)
@@ -118,8 +119,12 @@ const ActiveSurvey = (props) => {
                                                         props.navigation.navigate('Surveys')
                                                     },2000)
                                                     //ошибка
-                                                }, async(reject)=>{
-                                                    addToQueue(totalRes).then(
+                                                }
+                                                // , async(reject)=>{
+
+                                                // }
+                                                ).catch((err)=>{
+                                                    addToQueue(totalRes, err.message).then(
                                                     //успех
                                                     ()=>{
                                                         setStatusText('При отправке возникла ошибка. Опрос перенаправлен в очередь.')
@@ -134,7 +139,7 @@ const ActiveSurvey = (props) => {
                                                     setTimeout(()=>{
                                                         props.navigation.navigate('Surveys')
                                                     },2000)
-                                                })
+                                            })
 
                                         }}
                                     >

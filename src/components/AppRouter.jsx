@@ -9,6 +9,7 @@ import {getCoord} from "../API/geo";
 import {getSurveys} from "../API/postService";
 import {useSelector, useDispatch} from "react-redux";
 import {setLocation} from "../redux/location/locationActions";
+import { t } from "i18n-js";
 
 const AppRouter = (props) => {
     const dispatch = useDispatch()
@@ -39,18 +40,18 @@ const AppRouter = (props) => {
     return (
         <NavigationContainer>
             <Tab.Navigator
-                initialRouteName={'Опросы'}
+                initialRouteName={t("AppRouter.screenTitles.surveys")}
                 screenOptions={({ route }) => ({
                     tabBarIcon: ({color, size }) => {
                         let iconName;
 
-                        if (route.name === 'Опросы') {
+                        if (route.name === t("AppRouter.screenTitles.surveys")) {
                             iconName = 'help-outline'
                         }
-                        else if (route.name === 'Ожидание') {
+                        else if (route.name === t("AppRouter.screenTitles.queue")) {
                             iconName = 'archive-outline'
                         }
-                        else if (route.name === 'Настройки') {
+                        else if (route.name === t("AppRouter.screenTitles.settings")) {
                             iconName = 'settings'
                         }
                         // Возвращает нужную иконку
@@ -61,14 +62,14 @@ const AppRouter = (props) => {
                     unmountOnBlur:true
                 })}
             >
-                <Tab.Screen name="Опросы" component={()=><SurveyRouter
+                <Tab.Screen name={t("AppRouter.screenTitles.surveys")} component={()=><SurveyRouter
                                                             surveys={surveys}
                                                             loading={loading}
                                                             token={accessToken}
                                                          />}
                 />
-                <Tab.Screen name="Ожидание" component={()=><Queue/>} />
-                <Tab.Screen name="Настройки" component={()=><Settings setIsAuth={props.setIsAuth}/>} />
+                <Tab.Screen name={t("AppRouter.screenTitles.queue")} component={()=><Queue/>} />
+                <Tab.Screen name={t("AppRouter.screenTitles.settings")} component={()=><Settings setIsAuth={props.setIsAuth}/>} />
             </Tab.Navigator>
         </NavigationContainer>
     );

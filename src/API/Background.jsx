@@ -4,6 +4,7 @@ import { sendSurvey } from "./postService";
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { t } from "i18n-js";
 
 const BACKGROUND_FETCH_TASK = 'background-fetch';
 
@@ -24,8 +25,6 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
                                     instanceId:data.instanceId,
                                     success: true
                                 });
-
-                                console.log('sent')
                             }
                         } catch (e) {
                             edge.additional.error = true
@@ -34,7 +33,6 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
                                 surv: edge,
                                 success: false
                             });
-                            console.log('failed')
                         }
                     }
                 })
@@ -80,7 +78,7 @@ const Background = () => {
 
     return (
         <View style={styles.backImage}>
-            <Text style={styles.labelItem}>Фоновая {`\n`} отправка</Text>
+            <Text style={styles.labelItem}>{t("Background.caption")}</Text>
             <TouchableOpacity
                 style={{marginTop:5}}
                 onPress={async () => {
@@ -88,7 +86,7 @@ const Background = () => {
                 }}
             >
                 <Image source={require('../assets/images/sending.png')}/>
-            <Text style={styles.isPowered}>{isRegistered?"Вкл.":"Выкл."}</Text>
+            <Text style={styles.isPowered}>{isRegistered?t("Background.enabled"):t("Background.disabled")}</Text>
             </TouchableOpacity>
         </View>
     );

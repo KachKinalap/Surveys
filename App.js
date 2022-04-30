@@ -6,9 +6,9 @@ import { Store } from "./src/redux/store";
 import { persistor } from "./src/redux/store"
 import { PersistGate } from 'redux-persist/lib/integration/react';
 
+
 export default function App() {
-    console.disableYellowBox = true;
-    LogBox.ignoreAllLogs();
+
     LogBox.ignoreLogs(['Warning: ...', 'Looks like']);
   return (
       <Provider store={ Store }>

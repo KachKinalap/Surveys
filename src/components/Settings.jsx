@@ -1,15 +1,16 @@
-import React, {useState, useEffect} from 'react';
-import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Modal, Alert} from "react-native";
+import React, { useState } from 'react';
+import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Modal, Dimensions} from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setAccessToken, setRefreshToken } from "../redux/tokens/tokensActions";
 import Background from "../API/Background";
+import { t } from "i18n-js";
+import {setLanguage} from "../redux/language/languageActions";
 
 const Settings = (props) => {
     const [modalVisible, setModalVisible] = useState(false);
-    const dispatch = useDispatch()
-    const queue = useSelector(state=>state.queueReducer)
-
+    const dispatch = useDispatch();
+    const languages = [{asset:require("../assets/images/ru.png"), lang:"ru"}, {asset:require("../assets/images/en.png"), lang:"en"}];
     return (
         <SafeAreaView style={styles.container}>
             <Modal
@@ -17,13 +18,12 @@ const Settings = (props) => {
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
                     setModalVisible(!modalVisible);
                 }}
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Text style={styles.modalText}>Вы точно хотите выйти?</Text>
+                        <Text style={styles.modalText}>{t("Settings.modal.title")}</Text>
                         <View style={styles.buttonWrap}>
                             <TouchableOpacity
                                 style={[styles.button, styles.buttonClose]}
@@ -35,13 +35,13 @@ const Settings = (props) => {
                                     props.setIsAuth(false)
                                 }}
                             >
-                                <Text style={styles.textStyle}>Да</Text>
+                                <Text style={styles.textStyle}>{t("Settings.modal.yes")}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => setModalVisible(!modalVisible)}
                             >
-                                <Text style={styles.textStyle}>Нет</Text>
+                                <Text style={styles.textStyle}>{t("Settings.modal.no")}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -49,15 +49,32 @@ const Settings = (props) => {
             </Modal>
             <Background/>
             <View style={styles.backImage}>
-                <Text style={styles.labelItem}>Выйти</Text>
+                <Text style={styles.labelItem}>{t("Settings.exit")}</Text>
                 <TouchableOpacity
                     style={{marginTop:5}}
                     onPress={async () => {
                         setModalVisible(true)
                     }}
                 >
-                    <Image source={require('../assets/images/logout.png')}/>
+                    <Image source={require("../assets/images/logout.png")}/>
                 </TouchableOpacity>
+            </View>
+
+            <View>
+                <Text style={styles.labelItem}>{t("Settings.chooseLanguage")}</Text>
+                <View style={styles.langCont}>
+
+                    {
+                    languages.map(( item ) =>
+                        <TouchableOpacity style={styles.langItem} onPress={async() => {
+                            await dispatch( setLanguage(item.lang) );
+                        }}>
+                            <Text style={{fontSize:16}}>{item.lang}</Text>
+                            <Image source={item.asset} resizeMode={'contain'} style={{width:50, height:50}}/>
+                        </TouchableOpacity>
+                    )}
+
+                </View>
             </View>
         </SafeAreaView>
     );
@@ -79,9 +96,10 @@ const styles = StyleSheet.create({
     },
     labelItem:{
         fontSize:24,
-        marginRight:15,
         color:'sandybrown',
-        fontWeight:'700'
+        fontWeight:'700',
+        textAlign:'center',
+        marginBottom:10
     },
     centeredView: {
         flex: 1,
@@ -131,6 +149,21 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         textAlign: "center",
         fontSize:20
+    },
+    langCont: {
+        width: Dimensions.get('window').width*0.8,
+        height:80,
+        flexDirection: 'row',
+        justifyContent:'center'
+    },
+    langItem: {
+        alignItems:'center',
+        justifyContent:'space-around',
+        borderWidth:3,
+        borderColor:'sandybrown',
+        borderRadius:10,
+        padding:10,
+        marginHorizontal:10
     }
 })
 

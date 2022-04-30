@@ -2,6 +2,7 @@ import React from 'react';
 import {SafeAreaView, Text, StyleSheet, View, TouchableOpacity} from "react-native";
 import { useDispatch } from "react-redux";
 import { setSurvey } from "../redux/survey/surveyActions";
+import { t } from "i18n-js";
 
 const SurveyTemp = (props) => {
 
@@ -18,10 +19,10 @@ const SurveyTemp = (props) => {
                 }}
             >
                 <Text style={styles.title}>
-                    {props.data.title?props.data.title:'Без названия'}
+                    {props.data.title?props.data.title:t("SurveyTemp.noTitle")}
                 </Text>
                 <Text style={styles.description}>
-                    {props.data.description?props.data.description:'Без описания'}
+                    {props.data.description?props.data.description:t("SurveyTemp.noTitle")}
                 </Text>
             </TouchableOpacity>
         </SafeAreaView>

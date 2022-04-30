@@ -1,5 +1,6 @@
 import React from 'react';
 import {Text, StyleSheet, SafeAreaView, Image, Dimensions} from 'react-native';
+import { t } from "i18n-js";
 
 const LocationDenied = () => {
     return (
@@ -8,7 +9,7 @@ const LocationDenied = () => {
                    source={require('../assets/images/locationDenied.png')}
                    resizeMode='contain'
             />
-            <Text style={styles.text}>Приложению по каким-то причинам не был дан доступ к локации.{'\n'}Исправьте это вручную в настройках приложения, а затем перезапустите его.</Text>
+            <Text style={styles.text}>{t("LocationDenied.placeholder")}</Text>
         </SafeAreaView>
     );
 };

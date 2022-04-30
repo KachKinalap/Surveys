@@ -1,6 +1,8 @@
 import { SafeAreaView, StyleSheet, View } from 'react-native';
 import CountDown from 'react-native-countdown-component';
 import React from 'react'
+import { t } from "i18n-js";
+
 const Timer = (props) => {
 
     return (
@@ -22,7 +24,7 @@ const Timer = (props) => {
 
                         }
                     }
-                    onPress={() => alert('По истечении времени соединение будет признано некачественным')}
+                    onPress={() => alert(t("UI.Timer.attention"))}
                     size={20}
                 />
             </View>

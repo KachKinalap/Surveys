@@ -10,6 +10,7 @@ import { setAccessToken, setRefreshToken } from "../redux/tokens/tokensActions";
 import { setIP } from "../redux/IPaddress/IPActions";
 import Timer from "../UI/Timer";
 import {isTokenRight} from "../utils/tokenRight";
+import { t } from "i18n-js";
 
 const Login = (props) => {
     const { accessToken, refreshToken } = useSelector( state => state.tokensReducer )
@@ -17,8 +18,8 @@ const Login = (props) => {
     const [isIPChanged, setIsIPChanged] = useState(false)
     const [isCrashed, setIsCrashed] = useState(false)
     const [isDelayOut, setIsDelayOut] = useState(false)
-    const [login, setLogin] = useState('interviewer')
-    const [pass, setPass] = useState('interviewer')
+    const [login, setLogin] = useState('')
+    const [pass, setPass] = useState('')
     const [loading, setLoading] = useState(false)
     const { IPaddress } = useSelector( state => state.IPReducer )
     const dispatch = useDispatch()
@@ -64,13 +65,13 @@ const Login = (props) => {
                         <MyInput
                             value={login}
                             secure={false}
-                            label={'Имя пользователя'}
+                            label={t("Login.inputLabels.login")}
                             onChange={setLogin}
                         />
                         <MyInput
                             value={pass}
                             secure={true}
-                            label={'Пароль'}
+                            label={t("Login.inputLabels.password")}
                             onChange={setPass}
                         />
                         {IPaddress
@@ -80,19 +81,19 @@ const Login = (props) => {
                             <MyInput
                             value={IPAddr}
                             secure={false}
-                            label={'Адрес подключения'}
+                            label={t("Login.inputLabels.IPAddress")}
                             onChange={setIPAddr}
                             />
                         }
                         {isCrashed
                             ?
-                            <Text>Неправильный логин или пароль</Text>
+                            <Text>{t("Login.wrongCreds")}</Text>
                             :
                             console.log(' ')
                         }
                         {isDelayOut
                             ?
-                            <Text>Проблемы с подключением</Text>
+                            <Text>{t("Login.connectionError")}</Text>
                             :
                             console.log(' ')
                         }
@@ -117,7 +118,7 @@ const Login = (props) => {
                                     setIsIPChanged(true)
                                 }}>
                                 <Text style={{fontSize:18, color:'#000'}}>
-                                    Изменить IP
+                                    {t("Login.changeIP")}
                                 </Text>
                             </TouchableOpacity>
                         }

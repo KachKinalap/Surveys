@@ -9,6 +9,7 @@ import { sendSurvey } from "../API/postService";
 import Loader from "../UI/Loader";
 import { useSelector, useDispatch } from "react-redux";
 import { setQueue } from "../redux/queue/queueActions";
+import { t } from "i18n-js";
 
 const ActiveSurvey = (props) => {
 
@@ -19,7 +20,7 @@ const ActiveSurvey = (props) => {
         return (
             <View style={styles.mainCont}>
                 <Text style={styles.popupText}>
-                    К сожалению, в этом опросе нет вопросов
+                    {t("ActiveSurvey.emptySurvey.title")}
                 </Text>
                 <Image
                     style={styles.emptyImage}
@@ -27,7 +28,7 @@ const ActiveSurvey = (props) => {
                     resizeMode='contain'
                 />
                 <MyButton
-                    title={"К списку"}
+                    title={t("ActiveSurvey.emptySurvey.toListButton")}
                     onPress={()=>{
                         props.navigation.navigate('Surveys')
                     }}
@@ -98,7 +99,7 @@ const ActiveSurvey = (props) => {
                     >
                         <View style={styles.centeredView}>
                             <View style={styles.modalView}>
-                                <Text style={styles.modalText}>Вы точно хотите закончить тестирование?</Text>
+                                <Text style={styles.modalText}>{t("ActiveSurvey.endSurvey.approvalText")}</Text>
                                 <View style={styles.buttonWrap}>
                                     <TouchableOpacity
                                         style={[styles.button, styles.buttonClose]}
@@ -113,7 +114,7 @@ const ActiveSurvey = (props) => {
                                                 .then((resolve)=>{
                                                     //успех
                                                     setLoading(false)
-                                                    setStatusText('Опрос успешно отправлен, дождитесь перенаправления.')
+                                                    setStatusText(t("ActiveSurvey.sending.success"))
                                                     setStatusVisible(true)
                                                     setTimeout(()=>{
                                                         props.navigation.navigate('Surveys')
@@ -127,11 +128,11 @@ const ActiveSurvey = (props) => {
                                                     addToQueue(totalRes, err.message).then(
                                                     //успех
                                                     ()=>{
-                                                        setStatusText('При отправке возникла ошибка. Опрос перенаправлен в очередь.')
+                                                        setStatusText(t("ActiveSurvey.sending.putToQueue"))
                                                     },
                                                     //неудача
                                                     ()=>{
-                                                        setStatusText('Ошибка при отправке и помещении в очередь. Пройдите тест ещё раз.')
+                                                        setStatusText(t("ActiveSurvey.sending.failToQueue"))
                                                     }
                                                     )
                                                     setLoading(false)
@@ -143,13 +144,13 @@ const ActiveSurvey = (props) => {
 
                                         }}
                                     >
-                                        <Text style={styles.textStyle}>Yes</Text>
+                                        <Text style={styles.textStyle}>{t("ActiveSurvey.endSurvey.yesButton")}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                         style={[styles.button, styles.buttonClose]}
                                         onPress={() => setModalVisible(!modalVisible)}
                                     >
-                                        <Text style={styles.textStyle}>No</Text>
+                                        <Text style={styles.textStyle}>{t("ActiveSurvey.endSurvey.noButton")}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -214,7 +215,7 @@ const ActiveSurvey = (props) => {
                                 }
                                 <View style={styles.buttonCont}>
                                     <MyButton
-                                        title={"Назад"}
+                                        title={t("ActiveSurvey.menuButtons.back")}
                                         disabled={(currInd===0) || finishDisabled}
                                         onPress={((currInd-1) < 0)?()=>{}:()=>setCurrInd(currInd-1)}
                                     />
@@ -222,7 +223,7 @@ const ActiveSurvey = (props) => {
                                         (currInd===survey.questions.length-1)
                                             ?
                                             <MyButton
-                                                title={"Завершить"}
+                                                title={t("ActiveSurvey.menuButtons.finish")}
                                                 disabled={finishDisabled}
                                                 onPress={()=>{
                                                     setModalVisible(true)
@@ -231,7 +232,7 @@ const ActiveSurvey = (props) => {
                                             />
                                             :
                                             <MyButton
-                                                title={"Далее"}
+                                                title={t("ActiveSurvey.menuButtons.next")}
                                                 onPress={()=>{setCurrInd(currInd+1);
                                                 }}
                                             />
@@ -241,8 +242,8 @@ const ActiveSurvey = (props) => {
                             :
                             //тут проверяем готовность
                             <View style={styles.readyScreen}>
-                                <Text style={{fontSize:24, textAlign:'center'}}>Вы готовы к прохождению опроса?</Text>
-                                <MyButton title={'Начать'} onPress={async()=> {
+                                <Text style={{fontSize:24, textAlign:'center'}}>{t("ActiveSurvey.startScreen.startText")}</Text>
+                                <MyButton title={t("ActiveSurvey.startScreen.button")} onPress={async()=> {
                                     setIsReady(true)
                                 }}/>
                             </View>

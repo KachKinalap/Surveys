@@ -7,7 +7,6 @@ export function isTokenRight(tokenCreds) {
         //несоответствие разрядности форматов представления времени, в Date.now() показываются также миллисекунды, отрубаем их
         const now = Date.now().toString().substr(0, 10);
         const value = decodedToken.exp - now;
-        console.log(value);
         return value > 0;
     }
     else {

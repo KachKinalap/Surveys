@@ -13,6 +13,7 @@ import {deleteItemFromQueue, setQueue} from "../redux/queue/queueActions";
 import Loader from "../UI/Loader";
 import MyButton from "../UI/MyButton";
 import {sendSurvey} from "../API/postService";
+import { t } from "i18n-js";
 
 const Queue = () => {
 
@@ -38,7 +39,7 @@ const Queue = () => {
     const fillingLoaderMass = (length, index= -1, filler = '') => {
         const initLoaderMass = [];
         for(let i = 0; i < length; ++i){
-            initLoaderMass.push('Отправить');
+            initLoaderMass.push(t("Queue.buttons.sending.default"));
         }
         if ((index !== -1) && filler) {
             initLoaderMass[index] = filler;
@@ -53,7 +54,6 @@ const Queue = () => {
     }
 
     useEffect(()=>{
-        console.log('in useEffect')
         fillingLoaderMass(queue===null?0:queue.length);
     },[]);
 
@@ -68,38 +68,33 @@ const Queue = () => {
                             <SafeAreaView style={styles.containerI}>
                                 <TouchableOpacity
                                     style={styles.itemCont}
-                                    onPress={async()=>{
-                                        console.log("Нажми сильнее, чтобы заработало")
-                                    }}
                                 >
                                     <Text style={styles.title}>
-                                        {surv.additional.title?surv.additional.title:'Без названия'}
+                                        {surv.additional.title?surv.additional.title:t("Queue.item.noTitle")}
                                     </Text>
                                     <Text style={styles.description}>
-                                        {surv.additional.description?surv.additional.description:'Без описания'}
+                                        {surv.additional.description?surv.additional.description:t("Queue.item.noDescr")}
                                     </Text>
                                     <View style={styles.contAdditional}>
                                         <Text style={styles.idSurvey}>ID опроса: </Text>
                                         <Text style={styles.valueIDError}>
-                                            {surv.surveyCurr.instanceId?surv.surveyCurr.instanceId:'Индекса нет'}
+                                            {surv.surveyCurr.instanceId?surv.surveyCurr.instanceId:t("Queue.item.noIndex")}
                                         </Text>
                                     </View>
                                     <View style={styles.contAdditional}>
-                                        <Text style={styles.idSurvey}>Причина попадания в очередь:</Text>
+                                        <Text style={styles.idSurvey}>{t("Queue.item.errorTitle")}</Text>
                                             <Text style={styles.valueIDError}>
-                                                {surv.additional.errorSending?surv.additional.errorSending:'Информации нет'}
+                                                {surv.additional.errorSending?surv.additional.errorSending:t("Queue.item.noErrorInf")}
                                             </Text>
                                     </View>
                                     {surv.additional.error
                                         ?
-                                        <Text style={styles.notSent}>
-                                            Ошибка отправки в отложенном режиме
-                                        </Text>
+                                        <Text style={styles.notSent}>{t("Queue.item.delayedSendingError")}</Text>
                                         :
                                         console.log('')
                                     }
                                     <View style={styles.btnsCont}>
-                                    <MyButton title={'Удалить'} onPress={async ()=> {
+                                    <MyButton title={t("Queue.buttons.deleting")} onPress={async ()=> {
                                         await dispatch( deleteItemFromQueue( surv.surveyCurr.instanceId ) )
                                         setToggleDeleted(!toggleDeleted)
                                     }}/>
@@ -107,13 +102,13 @@ const Queue = () => {
 
                                         </View>
                                     <MyButton title={loaderMass[index]} onPress={()=>{
-                                        fillingLoaderMass(queue.length, index, "Отправка...");
+                                        fillingLoaderMass(queue.length, index, t("Queue.buttons.sending.processing"));
                                         setTimeout(()=>{
                                             sendSurvey(accessToken, surv.surveyCurr, location.coords).then((result) => {
                                                 if (result.status === 200 || result.status === 201) {
-                                                    fillingLoaderMass(queue.length, index, "Успешно", loaderMass);
+                                                    fillingLoaderMass(queue.length, index, t("Queue.buttons.sending.success"), loaderMass);
                                                     setTimeout(() => {
-                                                        fillingLoaderMass(queue.length, index, "Отправить", loaderMass);
+                                                        fillingLoaderMass(queue.length, index, t("Queue.buttons.sending.default"), loaderMass);
                                                         dispatch( deleteItemFromQueue( surv.surveyCurr.instanceId ) )
                                                         let newMass = loaderMass;
                                                         newMass.splice(index,1);
@@ -122,10 +117,9 @@ const Queue = () => {
                                                     },1500)
                                                 }
                                             }, (reject) => {
-                                                console.log(reject);
-                                                fillingLoaderMass(queue.length, index, "Ошибка");
+                                                fillingLoaderMass(queue.length, index, t("Queue.buttons.sending.error"));
                                                 setTimeout(() => {
-                                                    fillingLoaderMass(queue.length, index, "Отправить");
+                                                    fillingLoaderMass(queue.length, index, t("Queue.buttons.sending.default"));
                                                 },1500)
                                             })
                                         }, 2000);
@@ -137,7 +131,7 @@ const Queue = () => {
                         :
                         queue===null
                             ?
-                            <Text style={styles.empty}>Опросов в очереди на отправку нет</Text>
+                            <Text style={styles.empty}>{t("Queue.empty")}</Text>
                             :
                             <Loader/>
                 }

@@ -14,14 +14,15 @@ const Timer = (props) => {
                     onFinish={() =>
                         {
                             if(props.setLoading)
-                            props.setLoading(false)
+                                props.setLoading(false)
                             if(props.setIsDelayOut){
                                 props.setIsDelayOut(true)
                                 setTimeout(()=>{
                                     props.setIsDelayOut(false)
                                 },5000)
                             }
-
+                            if(props.setIsIPChanged)
+                                props.setIsIPChanged(false)
                         }
                     }
                     onPress={() => alert(t("UI.Timer.attention"))}

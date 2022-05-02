@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { Store } from "./src/redux/store";
 import { persistor } from "./src/redux/store"
 import { PersistGate } from 'redux-persist/lib/integration/react';
-
+import 'react-native-url-polyfill/auto';
 
 export default function App() {
 

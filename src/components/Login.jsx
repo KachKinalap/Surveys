@@ -27,12 +27,12 @@ const Login = (props) => {
         props.setIsAuth(true);
     }
     const Auth = async (userLogin, password, Ip)=> {
-        const response =  await getToken(userLogin, password, Ip)
+        dispatch( setIP(Ip) )
+        AsyncStorage.setItem('IPserver', Ip)
+        const response =  await getToken(userLogin, password)
         if(response.status === 200){
             await dispatch( setAccessToken(response.data.accessToken) )
             await dispatch( setRefreshToken(response.data.refreshToken) )
-            await dispatch( setIP(Ip) )
-            await AsyncStorage.setItem('IPserver', Ip)
             setLoading(false)
             props.setIsAuth(true)
         }
@@ -57,6 +57,7 @@ const Login = (props) => {
                     <Timer
                         setIsDelayOut={setIsDelayOut}
                         setLoading={setLoading}
+                        setIsIPChanged={setIsIPChanged}
                         time={20}
                     />
                 </View>

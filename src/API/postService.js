@@ -30,10 +30,11 @@ export async function sendSurvey(token, data, coords) {
     throw new Error("Something wrong with sending survey");
 }
 
-export async function getToken(login, password, IP) {
+export async function getToken(login, password) {
     try{
+        const URL = await SURV_URL()
         const data = JSON.stringify({"login": login, "password": password})
-        const resp = await axios.post(`http://${IP}:8080/api/v1.0/auth/signin`, data, {
+        const resp = await axios.post(`${URL}auth/signin`, data, {
             headers: {
                 'content-type': 'application/json'
             }

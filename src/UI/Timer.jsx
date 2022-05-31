@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import CountDown from 'react-native-countdown-component';
 import React from 'react'
 import { t } from "i18n-js";
@@ -6,7 +6,7 @@ import { t } from "i18n-js";
 const Timer = (props) => {
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.container}>
                 <CountDown
                     until={props.time}
@@ -29,7 +29,7 @@ const Timer = (props) => {
                     size={20}
                 />
             </View>
-        </SafeAreaView>
+        </View>
     );
 };
 

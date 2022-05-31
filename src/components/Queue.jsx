@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-    SafeAreaView,
     View,
     Text,
     StyleSheet,
@@ -58,14 +57,14 @@ const Queue = () => {
     },[]);
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <ScrollView>
                 {
                     queue
                         ?
                         queue.map( (surv, index) =>
 
-                            <SafeAreaView style={styles.containerI}>
+                            <View style={styles.containerI}>
                                 <TouchableOpacity
                                     style={styles.itemCont}
                                 >
@@ -76,7 +75,7 @@ const Queue = () => {
                                         {surv.additional.description?surv.additional.description:t("Queue.item.noDescr")}
                                     </Text>
                                     <View style={styles.contAdditional}>
-                                        <Text style={styles.idSurvey}>ID опроса: </Text>
+                                        <Text style={styles.idSurvey}>{t("Queue.item.indexCaption")} </Text>
                                         <Text style={styles.valueIDError}>
                                             {surv.surveyCurr.instanceId?surv.surveyCurr.instanceId:t("Queue.item.noIndex")}
                                         </Text>
@@ -126,7 +125,7 @@ const Queue = () => {
                                     }}/>
                                     </View>
                                 </TouchableOpacity>
-                            </SafeAreaView>
+                            </View>
                         )
                         :
                         queue===null
@@ -136,7 +135,7 @@ const Queue = () => {
                             <Loader/>
                 }
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 };
 

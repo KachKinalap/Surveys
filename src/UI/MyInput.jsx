@@ -1,6 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
-import {TextInput} from 'react-native-gesture-handler';
+import {View, StyleSheet, Text, TextInput} from 'react-native';
 
 const MyInput = (props) => {
     return (

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -10,6 +10,10 @@ import {getSurveys} from "../API/postService";
 import {useSelector, useDispatch} from "react-redux";
 import {setLocation} from "../redux/location/locationActions";
 import { t } from "i18n-js";
+import NetInfo from "@react-native-community/netinfo";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AppState} from "react-native";
+import * as Location from 'expo-location';
 
 const AppRouter = (props) => {
     const dispatch = useDispatch()
@@ -18,24 +22,67 @@ const AppRouter = (props) => {
     const [loading, setLoading] = useState(true)
     //состояние для json получаемых исследований
     const [surveys, setSurveys] = useState('')
-
+    //общее количество опросов в базе независимо от локации
+    const [total, setTotal] = useState(0)
     const Tab = createBottomTabNavigator()
+    //для отслеживания выключения локации без сворачивания приложения
+    const [GPSEnabled, setGPSEnabled] = useState(true);
+    //background/foreground etc
+    const [appState, setAppState] = useState(AppState.currentState);
+
+    useEffect(async () => {
+        const GPSInterval = setInterval(async()=>{
+            const GPS = await Location.getProviderStatusAsync()
+            setGPSEnabled(GPS.gpsAvailable)
+        }, 5000)
+        const subscription = AppState.addEventListener("change", nextAppState => {
+            setAppState(nextAppState);
+        });
+        return () => {
+            subscription.remove();
+            clearInterval(GPSInterval);
+        };
+    }, []);
 
     useEffect(()=>{
         try{
-            getCoord(props.setIsLocationGranted).then(
-                async (result)=> {
-                    await dispatch( setLocation(result) )
-                    getSurveys(accessToken, result.coords).then((result)=>{
-                        setSurveys(result.data.items)
-                        setLoading(false)
+            NetInfo.fetch().then(async (state) => {
+                if(state.isConnected && state.isInternetReachable){
+                    getCoord(props.setIsLocationGranted).then(
+                        async (result)=> {
+                            if(Object.keys(result).length){
+                                await dispatch( setLocation(result) )
+                                getSurveys(accessToken, result.coords).then((result)=>{
+                                    setTotal(result.data.total)
+                                    AsyncStorage.setItem("preloadedSurveysTotal", JSON.stringify(result.data.total))
+                                    setSurveys(result.data.items)
+                                    AsyncStorage.setItem("preloadedSurveys", JSON.stringify(result.data.items))
+                                    setLoading(false)
+                                })
+                            }
+                            else {
+                                props.setIsLocationGranted(false);
+                            }
+                        },
+                        (reject) => {
+                            props.setIsLocationGranted(false);
+                        }
+                    ).catch(()=>{
+                        props.setIsLocationGranted(false);
                     })
                 }
-            )
+                else {
+                    const presavedTotal = JSON.parse(await AsyncStorage.getItem("preloadedSurveysTotal"));
+                    const presavedSurveys = JSON.parse(await AsyncStorage.getItem("preloadedSurveys"));
+                    setTotal(presavedTotal===null?0:presavedTotal);
+                    setSurveys(presavedSurveys===null?[]:presavedSurveys);
+                    setLoading(false);
+                }
+            });
         } catch (e) {
             console.log(e)
         }
-    },[])
+    },[appState, GPSEnabled])
 
     return (
         <NavigationContainer>
@@ -63,9 +110,9 @@ const AppRouter = (props) => {
                 })}
             >
                 <Tab.Screen name={t("AppRouter.screenTitles.surveys")} component={()=><SurveyRouter
+                                                            total={total}
                                                             surveys={surveys}
                                                             loading={loading}
-                                                            token={accessToken}
                                                          />}
                 />
                 <Tab.Screen name={t("AppRouter.screenTitles.queue")} component={()=><Queue/>} />

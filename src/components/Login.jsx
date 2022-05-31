@@ -10,6 +10,7 @@ import { setAccessToken, setRefreshToken } from "../redux/tokens/tokensActions";
 import { setIP } from "../redux/IPaddress/IPActions";
 import Timer from "../UI/Timer";
 import {isTokenRight} from "../utils/tokenRight";
+import {checkRole} from "../utils/checkRole";
 import { t } from "i18n-js";
 
 const Login = (props) => {
@@ -31,10 +32,20 @@ const Login = (props) => {
         AsyncStorage.setItem('IPserver', Ip)
         const response =  await getToken(userLogin, password)
         if(response.status === 200){
-            await dispatch( setAccessToken(response.data.accessToken) )
-            await dispatch( setRefreshToken(response.data.refreshToken) )
-            setLoading(false)
-            props.setIsAuth(true)
+            if(!checkRole(response.data.accessToken)){
+                setLoading(false)
+                setIsCrashed(true)
+                setTimeout(()=>{
+                    setIsCrashed(false)
+                },5000)
+            }
+            else {
+                await dispatch( setAccessToken(response.data.accessToken) )
+                await dispatch( setRefreshToken(response.data.refreshToken) )
+                setLoading(false)
+                props.setIsAuth(true)
+            }
+
         }
         else {
             if(response.message === "Request failed with status code 500"){
@@ -58,7 +69,7 @@ const Login = (props) => {
                         setIsDelayOut={setIsDelayOut}
                         setLoading={setLoading}
                         setIsIPChanged={setIsIPChanged}
-                        time={20}
+                        time={60}
                     />
                 </View>
                 :

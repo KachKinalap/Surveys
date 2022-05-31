@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View} from "react-native";
+import { View, Dimensions } from "react-native";
 import MyInput from "./MyInput";
 
 const Open = (props) => {

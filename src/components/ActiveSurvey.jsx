@@ -69,8 +69,8 @@ const ActiveSurvey = (props) => {
         const [filledSurvey, setFilledSurvey] = useState({
             id:survey.id,
             instanceId:getId(),
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
+            latitude: location?.coords?.latitude || 'noLocation',
+            longitude: location?.coords?.longitude || 'noLocation',
             beginDate:new Date(),
             endDate:new Date(),
             completed:false,
@@ -121,9 +121,6 @@ const ActiveSurvey = (props) => {
                                                     },2000)
                                                     //ошибка
                                                 }
-                                                // , async(reject)=>{
-
-                                                // }
                                                 ).catch((err)=>{
                                                     addToQueue(totalRes, err.message).then(
                                                     //успех

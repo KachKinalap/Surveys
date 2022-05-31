@@ -15,7 +15,6 @@ export default function App() {
         <PersistGate loading={null} persistor={persistor}>
           <SafeAreaView style={styles.container}>
             <LoginRouter/>
-
           </SafeAreaView>
         </PersistGate>
       </Provider>

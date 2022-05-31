@@ -1,16 +1,52 @@
-import React from 'react';
-import {Text, StyleSheet, SafeAreaView, Image, Dimensions} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Text, StyleSheet, View, Image, Dimensions, AppState} from 'react-native';
+import MyButton from "../UI/MyButton";
 import { t } from "i18n-js";
+import * as Linking from "expo-linking";
+import * as Location from 'expo-location';
 
-const LocationDenied = () => {
+const LocationDenied = (props) => {
+    const [appState, setAppState] = useState(AppState.currentState);
+    const [serviceEnabled, setServiceEnabled] = useState(false);
+
+    useEffect(()=>{
+        const servInterval = setInterval(async()=>{
+            const serviceEnabled = await Location.hasServicesEnabledAsync();
+            if(serviceEnabled)
+                setServiceEnabled(true)
+        },2000)
+        return(()=>{
+            clearInterval(servInterval)
+        })
+    },[])
+
+    useEffect(async ()=>{
+        Location.getForegroundPermissionsAsync().then(async(res)=>{
+            if(res.granted === true && res.status === "granted"){
+                if(serviceEnabled)
+                    props.setIsLocationGranted(true);
+            }
+        });
+    },[appState, serviceEnabled]);
+
+    useEffect(() => {
+        const subscription = AppState.addEventListener("change", nextAppState => {
+            setAppState(nextAppState);
+        });
+        return () => {
+            subscription.remove();
+        };
+    }, []);
+
     return (
-        <SafeAreaView style={styles.cont}>
+        <View style={styles.cont}>
             <Image style={styles.img}
                    source={require('../assets/images/locationDenied.png')}
                    resizeMode='contain'
             />
             <Text style={styles.text}>{t("LocationDenied.placeholder")}</Text>
-        </SafeAreaView>
+            <MyButton title={t("LocationDenied.button")} onPress={()=>{Linking.openSettings()}}/>
+        </View>
     );
 };
 

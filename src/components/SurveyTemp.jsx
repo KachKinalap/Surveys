@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, Text, StyleSheet, View, TouchableOpacity} from "react-native";
+import {Text, StyleSheet, View, TouchableOpacity} from "react-native";
 import { useDispatch } from "react-redux";
 import { setSurvey } from "../redux/survey/surveyActions";
 import { t } from "i18n-js";
@@ -9,7 +9,7 @@ const SurveyTemp = (props) => {
     const dispatch = useDispatch()
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <TouchableOpacity
                 style={styles.itemCont}
                 onPress={async()=>{
@@ -25,7 +25,7 @@ const SurveyTemp = (props) => {
                     {props.data.description?props.data.description:t("SurveyTemp.noTitle")}
                 </Text>
             </TouchableOpacity>
-        </SafeAreaView>
+        </View>
     );
 };
 

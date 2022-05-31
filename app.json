@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Surveys",
-    "slug": "Surveys",
+    "name": "ProjectZero Mobile",
+    "slug": "ProjectZeroMobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -29,7 +29,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F4A460"
       },
-      "package": "com.kachkinalap.Surveys"
+      "package": "com.kachkinalap.ProjectZeroMobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"

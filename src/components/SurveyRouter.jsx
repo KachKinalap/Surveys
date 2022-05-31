@@ -6,7 +6,6 @@ import Surveys from "./Surveys";
 import ActiveSurvey from "./ActiveSurvey";
 
 const SurveyRouter = (props) => {
-
     const [currSurv, setCurrSurv] = useState([])
     const Stack = createNativeStackNavigator();
     return (
@@ -20,6 +19,7 @@ const SurveyRouter = (props) => {
                 <Stack.Screen
                     name="Surveys"
                     initialParams={{
+                        total:props.total,
                         surveys: props.surveys,
                         setSurv:setCurrSurv,
                         location:props.location,

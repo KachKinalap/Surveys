@@ -21,10 +21,16 @@ export async function sendSurvey(token, data, coords) {
     } catch (e) {
         if (e.response?.status === 400) {
             throw new Error(`Status: 400, Error: ${JSON.stringify(e.response?.data)}`);
+        } else if (e.response?.status === 401) {
+            throw new Error(`Status: 401, Error: ${JSON.stringify(e.response?.data)}`);
+        }else if (e.response?.status === 404) {
+            throw new Error(`Status: 404, Error: ${JSON.stringify(e.response?.data)}`);
         } else if (e.response?.status === 422) {
             throw new Error(`Status: 422, Error: ${JSON.stringify(e.response?.data)}`);
+        } else if (e.response?.status === 500) {
+            throw new Error(`Status: 500, Error: Internal server error`);
         } else {
-            throw new Error(e.response.data);
+            throw new Error("Something went wrong with app, please clear app's cache and reload app");
         }
     }
     throw new Error("Something wrong with sending survey");

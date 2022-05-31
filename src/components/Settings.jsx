@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Modal, Dimensions} from "react-native";
+import {Image, StyleSheet, Text, TouchableOpacity, View, Modal, Dimensions} from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from "react-redux";
 import { setAccessToken, setRefreshToken } from "../redux/tokens/tokensActions";
@@ -12,7 +12,7 @@ const Settings = (props) => {
     const dispatch = useDispatch();
     const languages = [{asset:require("../assets/images/ru.png"), lang:"ru"}, {asset:require("../assets/images/en.png"), lang:"en"}];
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <Modal
                 animationType="fade"
                 transparent={true}
@@ -65,8 +65,8 @@ const Settings = (props) => {
                 <View style={styles.langCont}>
 
                     {
-                    languages.map(( item ) =>
-                        <TouchableOpacity style={styles.langItem} onPress={async() => {
+                    languages.map(( item, index ) =>
+                        <TouchableOpacity key = {index} style={styles.langItem} onPress={async() => {
                             await dispatch( setLanguage(item.lang) );
                         }}>
                             <Text style={{fontSize:16}}>{item.lang}</Text>
@@ -76,7 +76,7 @@ const Settings = (props) => {
 
                 </View>
             </View>
-        </SafeAreaView>
+        </View>
     );
 };
 

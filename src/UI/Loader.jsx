@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Animated, Dimensions, SafeAreaView, Easing} from 'react-native';
+import {StyleSheet, Animated, Dimensions, View, Easing} from 'react-native';
 
 const Loader = () => {
 
@@ -45,13 +45,13 @@ const Loader = () => {
     })
 
     return (
-        <SafeAreaView style={styles.main}>
+        <View style={styles.main}>
             <Animated.View
                 style={[styles.loader, {transform: [{rotate: spin, scale: incr}] }]}
             >
             </Animated.View>
 
-        </SafeAreaView>
+        </View>
     );
 }
 

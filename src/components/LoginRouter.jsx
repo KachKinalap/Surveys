@@ -27,7 +27,9 @@ const LoginRouter = () => {
                                 setIsLocationGranted = { setIsLocationGranted }
                             />
                             :
-                            <LocationDenied/>
+                            <LocationDenied
+                                setIsLocationGranted = { setIsLocationGranted }
+                            />
                         :
                         <Login
                             setIsAuth = { setIsAuth }
